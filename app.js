@@ -252,11 +252,22 @@ function placeView(key,label,pts){
 }
 
 // ---- PARTICIPANT DETAIL -------------------------------------------------
+// Profiles pinned as quick-access buttons in the Participante tab.
+const QUICK_PROFILES = [
+  "ROBERTO JOSE ARANGO CABAL",
+  "HELENA ARANGO - MAGGIE LONDOÑO",
+  "ISHAN Y MARIA ELISA",
+  "JOSE ROBERTO Y ROBERTO JOSE ARANGO",
+  "IVETTE MANZUR",
+  "RAFA BHABHA Y MAGGIE LONDOÑO",
+  "ROBERTO ARANGO",
+  "MARIA CABAL",
+];
 function renderParticipant(){
   const app=document.getElementById("app");
   const ranked=scoreAll();
   const opts=ranked.map(r=>`<option value="${enc(r.p.name)}" ${r.p.name===detailName?'selected':''}>${r.p.name}</option>`).join("");
-  const quick=TRACKED.filter(n=>D.participants.some(p=>p.name===n))
+  const quick=QUICK_PROFILES.filter(n=>D.participants.some(p=>p.name===n))
     .map(n=>`<button class="jchip qa ${n===detailName?'act':''}" data-n="${enc(n)}">${deco(n)}${n}</button>`).join("");
   app.innerHTML=`<div class="toprow">
       <select id="psel" style="min-width:280px"><option value="">Selecciona…</option>${opts}</select>
