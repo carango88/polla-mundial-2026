@@ -508,6 +508,39 @@ function picksCard(name){
   </div>`;
 }
 
+// How many other participants share this profile's 4 podium picks
+// (Campeón/2.º/3.º/4.º) — as a set (any order) and in the exact same order.
+function finalistsCard(name){
+  const p=D.participants.find(x=>x.name===name);
+  const slots=[["champion","🏆 Campeón"],["runnerUp","2.º"],["third","3.º"],["fourth","4.º"]];
+  const mineSet=new Set(slots.map(([k])=>p[k]).filter(Boolean));
+  const others=D.participants.filter(x=>x.name!==name);
+  const sameSet=others.filter(x=>{
+    const s=new Set([x.champion,x.runnerUp,x.third,x.fourth].filter(Boolean));
+    if(mineSet.size!==4||s.size!==4) return false;
+    for(const t of mineSet) if(!s.has(t)) return false;
+    return true;
+  });
+  const sameOrder=sameSet.filter(x=>slots.every(([k])=>x[k]===p[k]));
+  const chips=slots.map(([k,lbl])=>p[k]
+    ?`<span class="pk"><span class="muted">${lbl}:</span> <span class="fl">${flagOf(p[k])}</span> ${p[k]}</span>`
+    :`<span class="pk pk-out"><span class="muted">${lbl}:</span> —</span>`).join("");
+  const nameList=arr=>{
+    if(!arr.length) return "";
+    const names=arr.map(x=>`${deco(x.name)}${x.name}`);
+    const cap=14, shown=names.slice(0,cap).join(" · ");
+    return shown+(names.length>cap?` <span class="muted">· y ${names.length-cap} más</span>`:"");
+  };
+  return `<div class="card">
+    <h3 style="margin-top:0">🏁 Mismo podio — ${deco(name)}${name}</h3>
+    <div class="pkwrap" style="margin-bottom:12px">${chips}</div>
+    <div class="kv"><span>Mismos 4 equipos <span class="muted">(en cualquier orden)</span></span><b class="${sameSet.length?'ok':'muted'}">${sameSet.length}</b></div>
+    <div class="muted" style="font-size:12px;margin:3px 0 12px">${sameSet.length?nameList(sameSet):"Nadie más eligió exactamente este cuarteto."}</div>
+    <div class="kv"><span>Mismo orden exacto <span class="muted">(1.º→4.º idénticos)</span></span><b class="${sameOrder.length?'ok':'muted'}">${sameOrder.length}</b></div>
+    <div class="muted" style="font-size:12px;margin-top:3px">${sameOrder.length?nameList(sameOrder):"Nadie más coincide en el orden exacto."}</div>
+  </div>`;
+}
+
 function renderTracked(){
   const app=document.getElementById("app");
   const players=TRACKED.map(n=>D.participants.find(p=>p.name===n)).filter(Boolean);
@@ -570,6 +603,7 @@ function renderTracked(){
     <div class="duel-grid">${O.map(x=>keyCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(x=>prizeCard(x.p.name,allO)).join("")}</div>
     <div class="duel-grid">${O.map(x=>picksCard(x.p.name)).join("")}</div>
+    <div class="duel-grid">${O.map(x=>finalistsCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(segTable).join("")}</div>
     <div class="card muted" style="font-size:12px">
       “Ganables” cuenta solo los puntos que <b>las selecciones de cada perfil</b> aún pueden conseguir: un equipo que no eligió —o que ya quedó eliminado— no suma, aunque siga el segmento abierto.
