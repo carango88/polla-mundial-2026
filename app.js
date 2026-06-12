@@ -89,7 +89,7 @@ function renderLeaderboard(){
   const cols=[["group","Grupos","Fase de grupos"],["r32","R32","Ronda de 32"],["r16","R16","Octavos"],
               ["qf","4tos","Cuartos"],["sf","Semis","Semifinalistas"],
               ["fourth","4.º","Cuarto lugar"],["third","3.º","Tercer lugar"],["runnerUp","2.º","Subcampeón"],["champion","🏆","Campeón"],
-              ["scPts","Gol.","Goleador"]];
+              ["scPts","⚽","Goleador"]];
   const colVal=(s,k)=>
     k==="group"?s.group:
     k==="scPts"?s.scPts:
@@ -396,32 +396,71 @@ function cpRanks(allO,segs,name){
 function prizeCard(name,allO){
   const rows=PRIZES.map(t=>{
     const n=t.slots.length, r=cpRanks(allO,t.segs,name);
-    let estado,monto="";
+    let estado,empate="";
     if(r.rank<=n){
-      const s=t.slots[r.rank-1];
-      if(r.tied){ const share=r.tied+1;   // me + everyone tied with me
+      if(r.tied){
         estado='<span class="ok">🤝 empatado en zona</span>';
-        monto=`${money(s)} ÷ ${share} = <b>${moneyEach(s,share)}</b> c/u`;
+        empate=`<span class="muted">empatado con ${r.tied} (${r.tied+1} se reparten)</span>`;
       } else {
-        estado='<span class="ok">🏆 en zona</span>';
-        monto=`<b>${money(s)}</b>`;
+        estado='<span class="ok">🏆 en zona — solo</span>';
       }
     }
-    else if(r.bestRank<=n){ estado='<span style="color:var(--gold)">🟢 alcanzable</span>'; const s=t.slots[r.bestRank-1]; monto="hasta "+money(s); }
+    else if(r.bestRank<=n){ estado='<span style="color:var(--gold)">🟢 alcanzable</span>'; }
     else estado='<span class="ko">🔴 fuera de alcance</span>';
-    const prizeList=t.slots.map(s=>`${s.pos}.º ${s.pct||cop(s.amt)}`).join(" · ");
-    const tieNote=r.tied? ` <span class="muted">(empat. ${r.tied})</span>`:"";
+    const prizeList=t.slots.map(s=>`${s.pos}.º`).join(" · ");
+    const tieNote=r.tied? ` <span class="muted">(+${r.tied} empat.)</span>`:"";
     return `<tr>
-      <td><b>${t.label}</b><div class="muted" style="font-size:11px">${t.sub} · ${prizeList}</div></td>
+      <td><b>${t.label}</b><div class="muted" style="font-size:11px">${t.sub} · premios ${prizeList}</div></td>
       <td style="text-align:right">#${r.rank}${tieNote}<div class="muted" style="font-size:11px">mejor #${r.bestRank}</div></td>
       <td style="text-align:right" class="muted">${r.cur}/${r.max}</td>
-      <td>${estado}${monto?` <span class="muted">· ${monto}</span>`:""}</td></tr>`;
+      <td>${estado}${empate?`<div style="font-size:11px;margin-top:2px">${empate}</div>`:""}</td></tr>`;
   }).join("");
   return `<div class="card">
-    <h3 style="margin-top:0">💰 Premios en la mira — ${deco(name)}${name}</h3>
+    <h3 style="margin-top:0">🏅 Premios en la mira — ${deco(name)}${name}</h3>
     <table><thead><tr><th>Etapa / premios</th><th style="text-align:right">Vas</th>
       <th style="text-align:right">Pts cum.</th><th>Estado</th></tr></thead>
       <tbody>${rows}</tbody></table>
+  </div>`;
+}
+
+// Key make-or-break picks: differential upside (valuable & rare) vs consensus
+// risk (valuable & popular outcomes this profile is missing), across all phases.
+function keyDiffs(p){
+  const ps=D.participants, N=ps.length;
+  const up=[], risk=[];
+  const EXACT=[["champion","Campeón",25],["runnerUp","Subcampeón",15],["scorer","Goleador",15],["third","3.º lugar",10],["fourth","4.º lugar",10]];
+  for(const [k,label,pts] of EXACT){
+    const pick=p[k];
+    if(pick) up.push({key:k,label,team:pick,player:k==="scorer",pts,pop:ps.filter(x=>x[k]===pick).length/N});
+    const top=tally(ps.map(x=>x[k]))[0];                 // field favourite for this slot
+    if(top && top[0]!==pick) risk.push({key:k,label,team:top[0],player:k==="scorer",pts,pop:top[1]/N});
+  }
+  const SET=[["sf","Semifinalista",5],["qf","Cuartos",4],["r16","Octavos",3],["r32","R32",2]];
+  for(const [k,label,pts] of SET){
+    for(const team of p[k]) up.push({key:k,label,team,pts,pop:ps.filter(x=>x[k].includes(team)).length/N});
+    for(const [team,cnt] of tally(ps.flatMap(x=>x[k]))){ const pop=cnt/N; if(pop>0.5 && !p[k].includes(team)) risk.push({key:k,label,team,pts,pop}); }
+  }
+  const lev=o=>o.pts*(1-o.pop), rlev=o=>o.pts*o.pop;
+  const dedupe=(arr,score)=>{ const m=new Map();
+    for(const o of arr){ const id=(o.player?"P:":"T:")+o.team; const cur=m.get(id); if(!cur||score(o)>score(cur)) m.set(id,o); }
+    return [...m.values()]; };
+  return {
+    up:   dedupe(up,lev).sort((a,b)=>lev(b)-lev(a)).slice(0,6),
+    risk: dedupe(risk,rlev).sort((a,b)=>rlev(b)-rlev(a)).slice(0,6),
+  };
+}
+function keyCard(name){
+  const p=D.participants.find(x=>x.name===name); const {up,risk}=keyDiffs(p);
+  const fmt=it=> it.player ? `<b>${it.team}</b>` : `<b><span class="fl">${flagOf(it.team)}</span> ${it.team}</b>`;
+  const row=(it,cls,note)=>`<div class="kv"><span>${fmt(it)} <span class="muted">${it.label} · ${it.pts} pts</span></span><span class="${cls}" style="white-space:nowrap">${note}</span></div>`;
+  const ups = up.length ? up.map(it=>row(it,"ok",`solo ${Math.round(it.pop*100)}% lo tiene`)).join("") : '<div class="muted">—</div>';
+  const rks = risk.length ? risk.map(it=>row(it,"ko",`${Math.round(it.pop*100)}% lo tiene · tú no`)).join("") : '<div class="muted">—</div>';
+  return `<div class="card">
+    <h3 style="margin-top:0">🎯 Resultados clave — ${deco(name)}${name}</h3>
+    <div class="muted" style="font-size:12px;margin-bottom:4px">🟢 A favor — diferenciales: si aciertan, te separan del grupo</div>
+    ${ups}
+    <div class="muted" style="font-size:12px;margin:12px 0 4px">🔴 En contra — consenso que no tienes: si ocurre, pierdes terreno</div>
+    ${rks}
   </div>`;
 }
 
@@ -431,6 +470,41 @@ function bar(o){
     <span class="s-cur" style="width:${pct(o.current)}"></span>
     <span class="s-win" style="width:${pct(o.winnable)}"></span>
     <span class="s-lost" style="width:${pct(o.lost)}"></span></div>`;
+}
+
+// Shows a profile's actual bracket picks (R32/R16/QF/SF + top-4 + scorer)
+// with live status: ✓ ya clasificó · ✗ eliminado · pendiente.
+function picksCard(name){
+  const p=D.participants.find(x=>x.name===name);
+  const elim=new Set(results.eliminated||[]);
+  const chip=(c,stageKey)=>{
+    const inSet=(results[stageKey]||[]).includes(c);
+    const out=elim.has(c);
+    const cls=inSet?"pk-ok":(out?"pk-out":"pk-pend");
+    const mark=inSet?"✓":(out?"✗":"");
+    return `<span class="pk ${cls}"><span class="fl">${flagOf(c)}</span> ${c}${mark?` ${mark}`:""}</span>`;
+  };
+  const stage=(key,label,pts)=>p[key]&&p[key].length?`<div class="pkstage">
+    <div class="pkhead">${label} <span class="muted">${pts} pts c/u</span></div>
+    <div class="pkwrap">${p[key].map(c=>chip(c,key)).join("")}</div></div>`:"";
+  const plc=(key,label,pts)=>{
+    const c=p[key]; if(!c) return "";
+    const res=results[key];
+    const cls=res?(res===c?"pk-ok":"pk-out"):(elim.has(c)?"pk-out":"pk-pend");
+    const mark=res?(res===c?"✓":"✗"):"";
+    return `<span class="pk ${cls}"><span class="muted">${label}:</span> <span class="fl">${flagOf(c)}</span> ${c}${mark?` ${mark}`:""} <span class="muted">${pts}</span></span>`;
+  };
+  const sc=p.scorer?`<span class="pk ${results.scorer?(norm(results.scorer)===norm(p.scorer)?"pk-ok":"pk-out"):"pk-pend"}"><span class="muted">⚽:</span> ${p.scorer} <span class="muted">15</span></span>`:"";
+  return `<div class="card">
+    <h3 style="margin-top:0">📋 Selecciones — ${deco(name)}${name}</h3>
+    ${stage("r32","Ronda de 32",2)}
+    ${stage("r16","Octavos",3)}
+    ${stage("qf","Cuartos",4)}
+    ${stage("sf","Semifinalistas",5)}
+    <div class="pkstage"><div class="pkhead">Puestos finales y goleador</div>
+      <div class="pkwrap">${plc("champion","🏆 Campeón",25)}${plc("runnerUp","2.º",15)}${plc("third","3.º",10)}${plc("fourth","4.º",10)}${sc}</div></div>
+    <div class="muted" style="font-size:11px;margin-top:8px">✓ ya clasificó · ✗ eliminado · sin marca = pendiente</div>
+  </div>`;
 }
 
 function renderTracked(){
@@ -492,7 +566,9 @@ function renderTracked(){
       <span class="muted">Logrados (verde) · Ganables según sus selecciones y equipos aún vivos (dorado) · Perdidos (rojo). Sobre 311.</span>
     </div>
     <div class="duel-grid">${O.map(card).join("")}</div>
+    <div class="duel-grid">${O.map(x=>keyCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(x=>prizeCard(x.p.name,allO)).join("")}</div>
+    <div class="duel-grid">${O.map(x=>picksCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(segTable).join("")}</div>
     <div class="card muted" style="font-size:12px">
       “Ganables” cuenta solo los puntos que <b>las selecciones de cada perfil</b> aún pueden conseguir: un equipo que no eligió —o que ya quedó eliminado— no suma, aunque siga el segmento abierto.
