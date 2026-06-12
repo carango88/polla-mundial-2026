@@ -789,11 +789,106 @@ function renderGoals(){
 
 // ---- utils --------------------------------------------------------------
 function enc(s){return encodeURIComponent(s);} function dec(s){return decodeURIComponent(s);}
+// ---- COMPARAR: side-by-side of 2–3 participants ------------------------
+let cmp=[];
+function renderCompare(){
+  const app=document.getElementById("app");
+  const ranked=scoreAll();
+  const rankOf=n=>ranked.findIndex(r=>r.p.name===n)+1;
+  if(!cmp.length){
+    const def=i=>(TRACKED[i]&&D.participants.some(p=>p.name===TRACKED[i]))?TRACKED[i]:(ranked[i]?ranked[i].p.name:null);
+    cmp=[def(0),def(1)];
+  }
+  const opts=sel=>ranked.map(r=>`<option value="${enc(r.p.name)}" ${r.p.name===sel?'selected':''}>${r.p.name}</option>`).join("");
+  const selBox=i=>`<select class="cmpsel" data-i="${i}" style="min-width:200px">
+    <option value="">${i<2?'Selecciona…':'+ 3.º (opcional)'}</option>${opts(cmp[i])}</select>`;
+
+  const C=cmp.map(n=>n?D.participants.find(p=>p.name===n):null).filter(Boolean);
+
+  let body;
+  if(C.length<2){
+    body=`<div class="card muted">Elige al menos 2 participantes para comparar.</div>`;
+  }else{
+    const data=C.map(p=>({p,s:scoreParticipant(p),o:outlook(p)}));
+    const colH=data.map(d=>`<th style="text-align:right">${deco(d.p.name)}${d.p.name}</th>`).join("");
+
+    // points table — best value per row is flagged ▲ (unless everyone ties)
+    const ptsRow=(label,vals,fmt,better="hi")=>{
+      const best=better==="hi"?Math.max(...vals):Math.min(...vals);
+      const allEqual=vals.every(v=>v===vals[0]);
+      const cells=vals.map((v,i)=>{
+        const lead=!allEqual && v===best;
+        return `<td style="text-align:right" class="${lead?'ok':''}">${fmt(v,data[i])}${lead?' ▲':''}</td>`;
+      }).join("");
+      return `<tr><td>${label}</td>${cells}</tr>`;
+    };
+    const ptsTable=`<div class="card"><h3 style="margin-top:0">📊 Puntos</h3>
+      <table><thead><tr><th>Métrica</th>${colH}</tr></thead><tbody>
+        ${ptsRow("Posición",data.map(d=>rankOf(d.p.name)),v=>`#${v}`,"lo")}
+        ${ptsRow("Total actual",data.map(d=>d.s.total),v=>`<b class="total">${v}</b>`)}
+        ${ptsRow("Máx. posible",data.map(d=>d.o.max),v=>v)}
+        ${ptsRow("Fase de grupos",data.map(d=>d.s.group),(v,d)=>`${v} <span class="muted">(${d.s.gHits}/${d.s.gPlayed})</span>`)}
+        ${ptsRow("R32",data.map(d=>d.s.r32.pts),(v,d)=>`${v} <span class="muted">(${d.s.r32.hits.length})</span>`)}
+        ${ptsRow("R16",data.map(d=>d.s.r16.pts),(v,d)=>`${v} <span class="muted">(${d.s.r16.hits.length})</span>`)}
+        ${ptsRow("QF",data.map(d=>d.s.qf.pts),(v,d)=>`${v} <span class="muted">(${d.s.qf.hits.length})</span>`)}
+        ${ptsRow("Semis",data.map(d=>d.s.sf.pts),(v,d)=>`${v} <span class="muted">(${d.s.sf.hits.length})</span>`)}
+        ${ptsRow("Campeón",data.map(d=>d.s.placeHits.champion?P.champion:0),v=>v)}
+        ${ptsRow("Subcampeón",data.map(d=>d.s.placeHits.runnerUp?P.runnerUp:0),v=>v)}
+        ${ptsRow("3.º",data.map(d=>d.s.placeHits.third?P.third:0),v=>v)}
+        ${ptsRow("4.º",data.map(d=>d.s.placeHits.fourth?P.fourth:0),v=>v)}
+        ${ptsRow("Goleador",data.map(d=>d.s.scPts),v=>v)}
+      </tbody></table></div>`;
+
+    // final selections — flag chips, ✓/✗ vs official, "iguales" when all match
+    const slot=(key,label)=>{
+      const res=results[key];
+      const picks=data.map(d=>d.p[key]);
+      const allSame=picks[0]&&picks.every(x=>x===picks[0]);
+      const cells=data.map(d=>{
+        const c=d.p[key];
+        const cls=res?(c===res?"ok":"ko"):"";
+        const disp=key==="scorer"?(c||"—"):(c?`<span class="fl">${flagOf(c)}</span> ${c}`:"—");
+        const mark=res?(c===res?" ✓":" ✗"):"";
+        return `<td style="text-align:right" class="${cls}">${disp}${mark}</td>`;
+      }).join("");
+      return `<tr><td>${label}${allSame?' <span class="muted" style="font-size:11px">· iguales</span>':''}</td>${cells}</tr>`;
+    };
+    const picksTable=`<div class="card"><h3 style="margin-top:0">🏆 Selecciones finales</h3>
+      <table><thead><tr><th>Puesto</th>${colH}</tr></thead><tbody>
+        ${slot("champion","Campeón")}${slot("runnerUp","Subcampeón")}${slot("third","3.º")}${slot("fourth","4.º")}${slot("scorer","⚽ Goleador")}
+      </tbody></table></div>`;
+
+    // knockout sets — count each picked + how many ALL of them share
+    const setRow=(key,label,n)=>{
+      const sets=data.map(d=>new Set(d.p[key]));
+      const inter=[...sets[0]].filter(c=>sets.every(s=>s.has(c)));
+      const cells=data.map(d=>`<td style="text-align:right">${d.p[key].length}/${n}</td>`).join("");
+      return `<tr><td>${label}</td>${cells}<td style="text-align:right" class="ok">${inter.length}</td></tr>`;
+    };
+    const setsTable=`<div class="card"><h3 style="margin-top:0">🔁 Coincidencias en eliminatorias</h3>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">Equipos que eligió cada uno y cuántos comparten <b>todos</b> los seleccionados.</div>
+      <table><thead><tr><th>Ronda</th>${colH}<th style="text-align:right">En común</th></tr></thead><tbody>
+        ${setRow("r32","Ronda de 32",32)}${setRow("r16","Octavos",16)}${setRow("qf","Cuartos",8)}${setRow("sf","Semifinalistas",4)}
+      </tbody></table></div>`;
+
+    body=ptsTable+picksTable+setsTable;
+  }
+
+  app.innerHTML=`<div class="toprow">
+      <span class="muted" style="font-size:12px">Comparar:</span>
+      ${selBox(0)} ${selBox(1)} ${selBox(2)}
+    </div>${body}`;
+  document.querySelectorAll(".cmpsel").forEach(s=>s.onchange=e=>{
+    const i=+e.target.dataset.i; cmp[i]=e.target.value?dec(e.target.value):null; renderCompare();
+  });
+}
+
 function render(){
   window.onscroll=null;   // clear any prior scroll-spy
   tab==="leaderboard"?renderLeaderboard():
   tab==="results"?renderResults():
   tab==="tracked"?renderTracked():
+  tab==="compare"?renderCompare():
   tab==="stats"?renderStats():
   tab==="goals"?renderGoals():
   renderParticipant();
