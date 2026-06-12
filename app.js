@@ -516,6 +516,26 @@ function barList(entries, fmt, n=10){
     <span class="track"><span class="fill" style="width:${(c/mx*100).toFixed(0)}%"></span></span>
     <span class="val">${c} · ${(c/N*100).toFixed(0)}%</span></div>`).join("");
 }
+// How divided participants are on a match: Shannon entropy of {home,draw,away}.
+function splitScore(i){
+  const c=[0,0,0];
+  for(const p of D.participants){ const v=p.group[i]; if(v==="1")c[0]++; else if(v==="E")c[1]++; else if(v==="2")c[2]++; }
+  const tot=c[0]+c[1]+c[2]||1;
+  let H=0; for(const n of c){ if(n){ const pr=n/tot; H-=pr*Math.log2(pr); } }
+  return {i,c,tot,H};
+}
+function splitRow(s){
+  const m=D.schedule[s.i], [h,d,a]=s.c, tot=s.tot, pct=n=>n/tot*100, R=n=>Math.round(pct(n));
+  return `<div class="splitrow">
+    <span class="splbl"><span class="fl">${flagOf(m.home)}</span> ${m.home} <span class="muted">vs</span> ${m.away} <span class="fl">${flagOf(m.away)}</span></span>
+    <span class="splbar">
+      <span class="sp home" style="width:${pct(h)}%" title="${m.home} ${R(h)}%"></span>
+      <span class="sp draw" style="width:${pct(d)}%" title="Empate ${R(d)}%"></span>
+      <span class="sp away" style="width:${pct(a)}%" title="${m.away} ${R(a)}%"></span>
+    </span>
+    <span class="spval muted">${R(h)}/${R(d)}/${R(a)}</span>
+  </div>`;
+}
 function matchPoll(i){
   const m=D.schedule[i], r=results.group[i];
   let c1=0,cE=0,c2=0;
@@ -580,6 +600,11 @@ function renderStats(){
       ${card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt, 48), "todos los elegidos")}
       ${card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")}
     </div>
+    ${card("Partidos más divididos — top 10",
+      `<div class="muted" style="font-size:11px;margin-bottom:10px">
+         <span class="spdot home"></span> local · <span class="spdot draw"></span> empate · <span class="spdot away"></span> visitante · <span style="margin-left:6px">% local/empate/visitante</span></div>
+       ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,10).map(splitRow).join("")}`,
+      "donde más se reparten las predicciones")}
     ${card("Predicciones por partido — fase de grupos",
       D.groups.map(g=>`<div class="grp-h" style="margin-top:12px"><span>Grupo ${g.label}</span></div>
         ${g.matches.map(i=>matchPoll(i)).join("")}`).join(""),
