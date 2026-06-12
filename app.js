@@ -298,6 +298,7 @@ function drawDetail(){
      ${placeRow("fourth","4to puesto")}
      <div class="kv"><span>Goleador</span><span>${p.scorer||'—'} ${results.scorer?(s.scOk?'<span class="ok">✓</span>':'<span class="ko">✗</span>'):'<span class="muted">pend.</span>'} · ${s.scPts} pts</span></div>
    </div>
+   ${picksCard(p.name)}
    <div class="card"><h3 style="margin-top:0">Picks de grupos <span class="muted" style="font-weight:400;font-size:12px">· tu elección resaltada · ✓/✗ en jugados</span></h3>
      ${D.groups.map(g=>`<div class="grp-h" style="margin-top:10px"><span>Grupo ${g.label}</span></div>
         <div class="grpgrid">${g.matches.map(i=>pickCard(p,i)).join("")}</div>`).join("")}
@@ -435,7 +436,7 @@ function keyDiffs(p){
     const top=tally(ps.map(x=>x[k]))[0];                 // field favourite for this slot
     if(top && top[0]!==pick) risk.push({key:k,label,team:top[0],player:k==="scorer",pts,pop:top[1]/N});
   }
-  const SET=[["sf","Semifinalista",5],["qf","Cuartos",4],["r16","Octavos",3],["r32","R32",2]];
+  const SET=[["sf","Semis",5],["qf","QF",4],["r16","R16",3],["r32","R32",2]];
   for(const [k,label,pts] of SET){
     for(const team of p[k]) up.push({key:k,label,team,pts,pop:ps.filter(x=>x[k].includes(team)).length/N});
     for(const [team,cnt] of tally(ps.flatMap(x=>x[k]))){ const pop=cnt/N; if(pop>0.5 && !p[k].includes(team)) risk.push({key:k,label,team,pts,pop}); }
@@ -642,8 +643,12 @@ function renderStats(){
   const avg=(sum/N).toFixed(1);
   const med=scored[Math.floor(N/2)];
   const max=scored[N-1], min=scored[0];
-  const leader=scoreAll()[0];
+  const rankedS=scoreAll();
+  const leader=rankedS[0];
   const tiedMax=scored.filter(s=>s===max).length;   // how many share the top score
+  // only flag tracked profiles (💯/💵) when they share the top score; ignore everyone else
+  const maxTracked=TRACKED.filter(n=>{const r=rankedS.find(x=>x.p.name===n); return r&&r.s.total===max;})
+    .map(n=>NAME_TAG[n]).join(" ");
 
   const card=(title,body,sub="")=>`<div class="card"><h3 style="margin-top:0">${title}${sub?` <span class="muted" style="font-weight:400">${sub}</span>`:""}</h3>${body}</div>`;
 
@@ -655,7 +660,7 @@ function renderStats(){
       ${card("Puntaje actual",`
         <div class="kv"><span>Promedio</span><b>${avg}</b></div>
         <div class="kv"><span>Mediana</span><b>${med}</b></div>
-        <div class="kv"><span>Máximo</span><b class="ok">${max}</b> <span class="muted">— ${tiedMax>1?`${tiedMax} empatados (incl. ${leader.p.name})`:leader.p.name}</span></div>
+        <div class="kv"><span>Máximo</span><b class="ok">${max}</b> <span class="muted">— ${tiedMax>1?`${tiedMax} empatados${maxTracked?` (incl. ${maxTracked})`:""}`:`${deco(leader.p.name)}${leader.p.name}`}</span></div>
         <div class="kv"><span>Mínimo</span><b>${min}</b></div>
         <div class="kv"><span>Puntos posibles</span><b class="muted">311</b></div>`,
         "partidos jugados hasta ahora")}
