@@ -525,9 +525,9 @@ function finalistsCard(name){
   const chips=slots.map(([k,lbl])=>p[k]
     ?`<span class="pk"><span class="muted">${lbl}:</span> <span class="fl">${flagOf(p[k])}</span> ${p[k]}</span>`
     :`<span class="pk pk-out"><span class="muted">${lbl}:</span> —</span>`).join("");
-  const nameList=arr=>{
+  const nameList=(arr,withScorer)=>{
     if(!arr.length) return "";
-    const names=arr.map(x=>`${deco(x.name)}${x.name}`);
+    const names=arr.map(x=>`${deco(x.name)}${x.name}${withScorer?` <span class="muted">(⚽ ${x.scorer||"—"})</span>`:""}`);
     const cap=14, shown=names.slice(0,cap).join(" · ");
     return shown+(names.length>cap?` <span class="muted">· y ${names.length-cap} más</span>`:"");
   };
@@ -537,7 +537,7 @@ function finalistsCard(name){
     <div class="kv"><span>Mismos 4 equipos <span class="muted">(en cualquier orden)</span></span><b class="${sameSet.length?'ok':'muted'}">${sameSet.length}</b></div>
     <div class="muted" style="font-size:12px;margin:3px 0 12px">${sameSet.length?nameList(sameSet):"Nadie más eligió exactamente este cuarteto."}</div>
     <div class="kv"><span>Mismo orden exacto <span class="muted">(1.º→4.º idénticos)</span></span><b class="${sameOrder.length?'ok':'muted'}">${sameOrder.length}</b></div>
-    <div class="muted" style="font-size:12px;margin-top:3px">${sameOrder.length?nameList(sameOrder):"Nadie más coincide en el orden exacto."}</div>
+    <div class="muted" style="font-size:12px;margin-top:3px">${sameOrder.length?nameList(sameOrder,true):"Nadie más coincide en el orden exacto."}</div>
   </div>`;
 }
 
