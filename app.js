@@ -504,6 +504,24 @@ function barList(entries, fmt, n=10){
     <span class="track"><span class="fill" style="width:${(c/mx*100).toFixed(0)}%"></span></span>
     <span class="val">${c} · ${(c/N*100).toFixed(0)}%</span></div>`).join("");
 }
+function matchPoll(i){
+  const m=D.schedule[i], r=results.group[i];
+  let c1=0,cE=0,c2=0;
+  for(const p of D.participants){ const v=p.group[i]; if(v==="1")c1++; else if(v==="E")cE++; else if(v==="2")c2++; }
+  const tot=c1+cE+c2||1;
+  const row=(label,n,cls,win)=>`<div class="barrow">
+    <span class="lbl">${label}${win?' <span class="ok">✓</span>':''}</span>
+    <span class="track"><span class="fill ${cls}" style="width:${(n/tot*100).toFixed(0)}%"></span></span>
+    <span class="val">${n} · ${(n/tot*100).toFixed(0)}%</span></div>`;
+  const played = r?`<span class="muted" style="font-weight:600;font-size:11px">· jugado</span>`:"";
+  return `<details class="mpoll">
+    <summary><span class="fl">${flagOf(m.home)}</span> ${m.home} <span class="muted">vs</span> ${m.away} <span class="fl">${flagOf(m.away)}</span> ${played}</summary>
+    <div class="mpoll-body">
+      ${row(`<span class="fl">${flagOf(m.home)}</span> ${m.home} gana`, c1, "home", r==="1")}
+      ${row("🤝 Empate", cE, "draw", r==="E")}
+      ${row(`<span class="fl">${flagOf(m.away)}</span> ${m.away} gana`, c2, "away", r==="2")}
+    </div></details>`;
+}
 function renderStats(){
   const app=document.getElementById("app");
   const ps=D.participants, N=ps.length;
@@ -549,7 +567,11 @@ function renderStats(){
     <div class="duel-grid">
       ${card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt))}
       ${card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")}
-    </div>`;
+    </div>
+    ${card("Predicciones por partido — fase de grupos",
+      D.groups.map(g=>`<div class="grp-h" style="margin-top:12px"><span>Grupo ${g.label}</span></div>
+        ${g.matches.map(i=>matchPoll(i)).join("")}`).join(""),
+      "clic en un partido para ver qué resultado eligió cada quién")}`;
 }
 
 // ---- GOLEADORES: official scorers + golden-boot bets --------------------

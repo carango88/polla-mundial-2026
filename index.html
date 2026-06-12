@@ -104,6 +104,15 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 .barrow .track{background:var(--panel2);border-radius:6px;height:10px;overflow:hidden;border:1px solid var(--line)}
 .barrow .fill{background:var(--accent);height:100%;display:block}
 .barrow .val{text-align:right;color:var(--muted);font-size:12px;white-space:nowrap}
+.barrow .fill.home{background:var(--accent)}
+.barrow .fill.draw{background:var(--gold)}
+.barrow .fill.away{background:#5aa9ff}
+.mpoll{border:1px solid var(--line);border-radius:8px;margin:5px 0;background:var(--panel2)}
+.mpoll>summary{cursor:pointer;padding:8px 11px;font-weight:700;font-size:13px;list-style:none;display:flex;align-items:center;gap:6px}
+.mpoll>summary::-webkit-details-marker{display:none}
+.mpoll>summary:hover{color:var(--accent)}
+.mpoll[open]>summary{border-bottom:1px solid var(--line)}
+.mpoll-body{padding:9px 13px}
 </style>
 </head>
 <body>
