@@ -254,6 +254,8 @@ function placeView(key,label,pts){
 // ---- PARTICIPANT DETAIL -------------------------------------------------
 // Profiles pinned as quick-access buttons in the Participante tab.
 const QUICK_PROFILES = [
+  "JUAN HUNDRED LONDOÑO",
+  "BENJAMIN WHITE",
   "ROBERTO JOSE ARANGO CABAL",
   "HELENA ARANGO - MAGGIE LONDOÑO",
   "ISHAN Y MARIA ELISA",
