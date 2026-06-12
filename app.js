@@ -196,6 +196,21 @@ function renderResults(){
   };
   if(tab==="results"){ window.onscroll=spy; spy(); } else window.onscroll=null;
 }
+// One participant's pick for match i: highlights the team they chose, ✓/✗ if played.
+function pickCard(p,i){
+  const m=D.schedule[i], pk=p.group[i], a=results.group[i];
+  const correct = a ? (pk===a) : null;
+  const state = correct===null ? "pend" : (correct ? "ok" : "bad");
+  const status = correct===null ? "·" : (correct ? "✓" : "✗");
+  const homeSel=pk==="1", awaySel=pk==="2", drew=pk==="E";
+  const mid = drew ? '🤝' : '<span class="muted">vs</span>';
+  return `<div class="pcard ${state}" title="${a?('Resultado: '+(a==="1"?m.home:a==="2"?m.away:"Empate")):'Pendiente'}">
+    <span class="pstat">${status}</span>
+    <span class="pteam h ${homeSel?'psel':''}"><span class="fl">${flagOf(m.home)}</span> ${m.home}</span>
+    <span class="pmid">${mid}</span>
+    <span class="pteam a ${awaySel?'psel':''}">${m.away} <span class="fl">${flagOf(m.away)}</span></span>
+  </div>`;
+}
 function groupBlock(g){
   const played=g.matches.filter(i=>results.group[i]).length;
   const teams=g.teams.map(c=>`<span class="fl">${flagOf(c)}</span> ${c}`).join(" · ");
@@ -283,13 +298,10 @@ function drawDetail(){
      ${placeRow("fourth","4to puesto")}
      <div class="kv"><span>Goleador</span><span>${p.scorer||'—'} ${results.scorer?(s.scOk?'<span class="ok">✓</span>':'<span class="ko">✗</span>'):'<span class="muted">pend.</span>'} · ${s.scPts} pts</span></div>
    </div>
-   <div class="card"><h3 style="margin-top:0">Picks de grupos</h3>
-     <div class="detail-grid">
-       ${D.schedule.map((m,i)=>{const pk=p.group[i];const a=results.group[i];
-         const cls=a?(pk===a?'ok':'ko'):'muted';
-         const lbl=v=>v==='1'?m.home:v==='2'?m.away:'Empate';
-         return `<div class="chk"><span class="muted">${m.home}-${m.away}</span> <b class="${cls}">${lbl(pk)}</b>${a?` <span class="muted">→ ${lbl(a)}</span>`:''}</div>`;}).join("")}
-     </div></div>`;
+   <div class="card"><h3 style="margin-top:0">Picks de grupos <span class="muted" style="font-weight:400;font-size:12px">· tu elección resaltada · ✓/✗ en jugados</span></h3>
+     ${D.groups.map(g=>`<div class="grp-h" style="margin-top:10px"><span>Grupo ${g.label}</span></div>
+        <div class="grpgrid">${g.matches.map(i=>pickCard(p,i)).join("")}</div>`).join("")}
+   </div>`;
 }
 
 
@@ -565,7 +577,7 @@ function renderStats(){
     </div>
 
     <div class="duel-grid">
-      ${card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt))}
+      ${card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt, 48), "todos los elegidos")}
       ${card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")}
     </div>
     ${card("Predicciones por partido — fase de grupos",
