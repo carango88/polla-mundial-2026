@@ -241,8 +241,19 @@ function renderParticipant(){
   const app=document.getElementById("app");
   const ranked=scoreAll();
   const opts=ranked.map(r=>`<option value="${enc(r.p.name)}" ${r.p.name===detailName?'selected':''}>${r.p.name}</option>`).join("");
-  app.innerHTML=`<div class="toprow"><select id="psel" style="min-width:280px"><option value="">Selecciona…</option>${opts}</select></div><div id="pdetail"></div>`;
+  const quick=TRACKED.filter(n=>D.participants.some(p=>p.name===n))
+    .map(n=>`<button class="jchip qa ${n===detailName?'act':''}" data-n="${enc(n)}">${deco(n)}${n}</button>`).join("");
+  app.innerHTML=`<div class="toprow">
+      <select id="psel" style="min-width:280px"><option value="">Selecciona…</option>${opts}</select>
+      ${quick?`<span class="muted" style="font-size:12px">Acceso rápido:</span>${quick}`:""}
+    </div><div id="pdetail"></div>`;
   document.getElementById("psel").onchange=e=>{detailName=e.target.value?dec(e.target.value):null;drawDetail();};
+  document.querySelectorAll(".qa").forEach(b=>b.onclick=()=>{
+    detailName=dec(b.dataset.n);
+    document.getElementById("psel").value=b.dataset.n;
+    document.querySelectorAll(".qa").forEach(x=>x.classList.toggle("act",x===b));
+    drawDetail();
+  });
   drawDetail();
 }
 function drawDetail(){
