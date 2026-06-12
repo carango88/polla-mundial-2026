@@ -14,6 +14,8 @@ window.RESULTS = {
     // ── Jun 11 ──────────────────────────────────────────────
     g[0] = "1"; // Match 1: Mexico 2–0 South Africa (MEX win)
     g[1] = "1"; // Match 2: South Korea 2–1 Czechia (KOR win)
+    // ── Jun 12 ──────────────────────────────────────────────
+    g[2] = "E"; // Match 3: Canada 1–1 Bosnia & Herzegovina (draw)
     return g;
   })(),
 
@@ -27,5 +29,7 @@ window.RESULTS = {
     { player: "L. Krejčí",   team: "CZE", goals: 1 },   // Jun 11 vs KOR (59')
     { player: "H. In-beom",  team: "KOR", goals: 1 },   // Jun 11 vs CZE (67')
     { player: "O. Hyeon-gyu", team: "KOR", goals: 1 },  // Jun 11 vs CZE (80')
+    { player: "J. Lukić",    team: "BIH", goals: 1 },   // Jun 12 vs CAN (21')
+    { player: "C. Larin",    team: "CAN", goals: 1 },   // Jun 12 vs BIH (78')
   ]
 };
