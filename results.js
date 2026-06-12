@@ -13,6 +13,7 @@ window.RESULTS = {
     const g = Array(72).fill(null);
     // ── Jun 11 ──────────────────────────────────────────────
     g[0] = "1"; // Match 1: Mexico 2–0 South Africa (MEX win)
+    g[1] = "E"; // Match 2: South Korea 1–1 Czechia (draw)
     return g;
   })(),
 
@@ -23,5 +24,7 @@ window.RESULTS = {
   goals: [
     { player: "J. Quiñones", team: "MEX", goals: 1 },   // Jun 11 vs RSA
     { player: "R. Jiménez",  team: "MEX", goals: 1 },   // Jun 11 vs RSA
+    { player: "L. Krejčí",   team: "CZE", goals: 1 },   // Jun 11 vs KOR (59')
+    { player: "H. In-beom",  team: "KOR", goals: 1 },   // Jun 11 vs CZE (67')
   ]
 };
