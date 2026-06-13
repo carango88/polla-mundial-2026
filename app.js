@@ -274,11 +274,23 @@ function renderParticipant(){
   const opts=byName.map(p=>`<option value="${enc(p.name)}" ${p.name===detailName?'selected':''}>${p.name}</option>`).join("");
   const quick=QUICK_PROFILES.filter(n=>D.participants.some(p=>p.name===n))
     .map(n=>`<button class="jchip qa ${n===detailName?'act':''}" data-n="${enc(n)}">${deco(n)}${n}</button>`).join("");
+  const dlist=`<datalist id="pnames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
   app.innerHTML=`<div class="toprow">
-      <select id="psel" style="min-width:280px"><option value="">Selecciona…</option>${opts}</select>
+      <input id="psearch" class="search" list="pnames" placeholder="🔍 Buscar participante…" value="${detailName?detailName.replace(/"/g,'&quot;'):''}" autocomplete="off">
+      <select id="psel" style="min-width:240px"><option value="">Selecciona…</option>${opts}</select>
+      ${dlist}
       ${quick?`<span class="muted" style="font-size:12px">Acceso rápido:</span>${quick}`:""}
     </div><div id="pdetail"></div>`;
+  const pick=name=>{
+    const hit=D.participants.find(p=>p.name===name) || D.participants.find(p=>p.name.toLowerCase()===String(name||'').toLowerCase());
+    if(!hit) return;
+    detailName=hit.name;
+    const sel=document.getElementById("psel"); if(sel) sel.value=enc(hit.name);
+    drawDetail();
+  };
   document.getElementById("psel").onchange=e=>{detailName=e.target.value?dec(e.target.value):null;drawDetail();};
+  const sb=document.getElementById("psearch");
+  sb.onchange=e=>pick(e.target.value);          // fires when a datalist option is chosen
   document.querySelectorAll(".qa").forEach(b=>b.onclick=()=>{
     detailName=dec(b.dataset.n);
     document.getElementById("psel").value=b.dataset.n;
@@ -647,18 +659,26 @@ function renderAnalysis(){
   const opts=sel=>byName.map(p=>`<option value="${enc(p.name)}" ${p.name===sel?'selected':''}>${p.name}</option>`).join("");
   const selBox=i=>`<select class="anasel" data-i="${i}" style="min-width:210px">
     <option value="">${i===0?'Selecciona…':'+ comparar con otro (opcional)'}</option>${opts(anaNames[i])}</select>`;
+  const dlist=`<datalist id="ananames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
   const chosen=anaNames.filter(n=>n&&D.participants.some(p=>p.name===n));
   const body=chosen.length
     ? analysisBody(chosen)
     : '<div class="card muted">Elige un participante para ver su análisis completo.</div>';
   app.innerHTML=`<div class="toprow">
       <span class="muted" style="font-size:12px">Analizar:</span>
+      <input id="anasearch" class="search" list="ananames" placeholder="🔍 Buscar participante…" autocomplete="off">
       ${selBox(0)} ${selBox(1)}
+      ${dlist}
       <span class="muted" style="font-size:12px">Logrados (verde) · Ganables (dorado) · Perdidos (rojo). Sobre 311.</span>
     </div>${body}`;
   document.querySelectorAll(".anasel").forEach(s=>s.onchange=e=>{
     const i=+e.target.dataset.i; anaNames[i]=e.target.value?dec(e.target.value):null; renderAnalysis();
   });
+  document.getElementById("anasearch").onchange=e=>{
+    const hit=D.participants.find(p=>p.name===e.target.value)
+            ||D.participants.find(p=>p.name.toLowerCase()===String(e.target.value||'').toLowerCase());
+    if(hit){ anaNames[0]=hit.name; renderAnalysis(); }
+  };
 }
 
 // ---- ESTADÍSTICAS: pool-wide aggregate stats ---------------------------
