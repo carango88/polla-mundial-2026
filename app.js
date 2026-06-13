@@ -74,10 +74,34 @@ function scoreAll(){
 
 // ---- routing ------------------------------------------------------------
 let tab="leaderboard", sortKey="total", detailName=null;
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
-  tab=t.dataset.tab;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t));
+const SECONDARY=["compare","sim","stats","goals","tracked"];
+function selectTab(name){
+  tab=name;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
+  // on mobile, the secondary tabs live in the More popup → keep the More button lit when one is active
+  const moreTab=document.getElementById("moreTab");
+  if(moreTab) moreTab.classList.toggle("active",SECONDARY.includes(name));
+  document.querySelectorAll("#moreMenu .mitem").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
   render();
+}
+const moreTab=document.getElementById("moreTab");
+const moreMenu=document.getElementById("moreMenu");
+const closeMore=()=>moreMenu&&moreMenu.classList.remove("open");
+// build the More popup from the secondary tabs (icon + label)
+if(moreMenu){
+  document.querySelectorAll('.tabs .tab[data-prio="2"]').forEach(t=>{
+    const b=document.createElement("button");
+    b.className="mitem"; b.dataset.tab=t.dataset.tab; b.innerHTML=t.innerHTML;
+    b.onclick=()=>{ selectTab(t.dataset.tab); closeMore(); };
+    moreMenu.appendChild(b);
+  });
+}
+document.querySelectorAll(".tabs .tab").forEach(t=>{
+  if(t.id==="moreTab"){ t.onclick=e=>{ e.stopPropagation(); moreMenu.classList.toggle("open"); }; return; }
+  t.onclick=()=>{ selectTab(t.dataset.tab); closeMore(); };
+});
+document.addEventListener("click",e=>{
+  if(moreMenu&&moreMenu.classList.contains("open")&&!moreMenu.contains(e.target)&&!moreTab.contains(e.target)) closeMore();
 });
 
 function anyResults(){

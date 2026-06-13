@@ -29,6 +29,8 @@ header>div:first-child{flex-shrink:0}
 .tab .te{font-size:13px;line-height:1}
 .tab .tl{font-size:12.5px}
 .tab.active{background:var(--panel2);color:var(--text);border-color:var(--line)}
+.more-tab{display:none}            /* desktop: all 10 tabs show; More is mobile-only */
+.more-menu{display:none}
 main{padding:20px 22px;max-width:1200px;margin:0 auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -166,6 +168,22 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
   .tab .te{font-size:20px}
   .tab .tl{display:none}                       /* icons only */
   .tab.active{background:var(--panel2);border-color:var(--accent)}
+  /* bottom bar = 5 primary tabs + a "More" button; the rest live in the More popup */
+  .tabs .tab[data-prio="2"]{display:none}
+  .more-tab{display:flex !important}
+  .more-menu{display:flex;flex-direction:column;gap:2px;position:fixed;left:8px;right:8px;
+    bottom:calc(60px + env(safe-area-inset-bottom));z-index:60;padding:6px;
+    background:rgba(23,29,51,.98);backdrop-filter:blur(10px);border:1px solid var(--line);
+    border-radius:14px;box-shadow:0 -6px 24px rgba(0,0,0,.35);
+    transform:translateY(8px);opacity:0;pointer-events:none;transition:transform .15s,opacity .15s}
+  .more-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
+  .more-menu .mitem{display:flex;align-items:center;gap:11px;width:100%;background:transparent;
+    border:none;color:var(--text);font-family:inherit;font-size:15px;font-weight:600;
+    padding:12px 14px;border-radius:10px;cursor:pointer;text-align:left}
+  .more-menu .mitem .te{font-size:20px;width:24px;text-align:center}
+  .more-menu .mitem .tl{display:inline}
+  .more-menu .mitem:active,.more-menu .mitem.active{background:var(--panel2)}
+  .more-menu .mitem.active{color:var(--accent)}
   main{padding:12px 12px 78px}                 /* clear the fixed bottom bar */
   .card{padding:12px;border-radius:10px;margin-bottom:12px}
   h3{font-size:13px;margin:12px 0 8px}
@@ -202,12 +220,14 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
     <div class="tab" data-tab="groups"><span class="te">📋</span><span class="tl">Grupos Live</span></div>
     <div class="tab" data-tab="participant"><span class="te">👤</span><span class="tl">Participante</span></div>
     <div class="tab" data-tab="analysis"><span class="te">🔬</span><span class="tl">Análisis</span></div>
-    <div class="tab" data-tab="compare"><span class="te">⚖️</span><span class="tl">Comparar</span></div>
-    <div class="tab" data-tab="sim"><span class="te">🎲</span><span class="tl">Simulador</span></div>
-    <div class="tab" data-tab="stats"><span class="te">📊</span><span class="tl">Estadísticas</span></div>
-    <div class="tab" data-tab="goals"><span class="te">⚽</span><span class="tl">Goleadores</span></div>
-    <div class="tab" data-tab="tracked"><span class="te">👀</span><span class="tl">Los que son</span></div>
+    <div class="tab" data-prio="2" data-tab="compare"><span class="te">⚖️</span><span class="tl">Comparar</span></div>
+    <div class="tab" data-prio="2" data-tab="sim"><span class="te">🎲</span><span class="tl">Simulador</span></div>
+    <div class="tab" data-prio="2" data-tab="stats"><span class="te">📊</span><span class="tl">Estadísticas</span></div>
+    <div class="tab" data-prio="2" data-tab="goals"><span class="te">⚽</span><span class="tl">Goleadores</span></div>
+    <div class="tab" data-prio="2" data-tab="tracked"><span class="te">👀</span><span class="tl">Los que son</span></div>
+    <div class="tab more-tab" id="moreTab"><span class="te">•••</span><span class="tl">Más</span></div>
   </div>
+  <div class="more-menu" id="moreMenu"></div>
 </header>
 <main id="app"></main>
 
