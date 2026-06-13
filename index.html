@@ -186,6 +186,7 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
     <div class="tab" data-tab="tracked">Los que son 👀</div>
     <div class="tab" data-tab="analysis">Análisis 🔬</div>
     <div class="tab" data-tab="compare">Comparar ⚖️</div>
+    <div class="tab" data-tab="kalshi">Kalshi 📈</div>
     <div class="tab" data-tab="stats">Estadísticas 📊</div>
     <div class="tab" data-tab="goals">Goleadores ⚽</div>
   </div>
@@ -197,7 +198,7 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 // the newest files — no manual cache-busting (?fresh=) needed. Order preserved.
 (function(){
   var t = Date.now();
-  ["data.js","results.js","app.js"].forEach(function(f){
+  ["data.js","results.js","kalshi.js","app.js"].forEach(function(f){
     document.write('<scr'+'ipt src="'+f+'?t='+t+'"></scr'+'ipt>');
   });
 })();

@@ -952,6 +952,89 @@ function renderCompare(){
   });
 }
 
+// ---- KALSHI: prediction-market accuracy vs actual results --------------
+function renderKalshi(){
+  const app=document.getElementById("app");
+  const K=window.KALSHI||{champion:{},matches:{}};
+  const elim=new Set(results.eliminated||[]);
+
+  // ----- champion market -----
+  const entries=Object.entries(K.champion||{}).sort((a,b)=>b[1]-a[1]);
+  const maxP=entries.length?entries[0][1]:1;
+  const champRows=entries.map(([code,prob],i)=>{
+    let status="vivo",cls="muted";
+    if(results.champion){
+      if(results.champion===code){status="🏆 Campeón";cls="ok";}
+      else if(elim.has(code)){status="eliminado";cls="ko";}
+      else status="—";
+    } else if(elim.has(code)){status="❌ eliminado";cls="ko";}
+    return `<div class="barrow">
+      <span class="lbl">${i+1}. <span class="fl">${flagOf(code)}</span> ${nameOf(code)} <span class="muted">${code}</span></span>
+      <span class="track"><span class="fill" style="width:${(prob/maxP*100).toFixed(0)}%"></span></span>
+      <span class="val"><b>${prob.toFixed(1)}%</b> · <span class="${cls}">${status}</span></span></div>`;
+  }).join("")||'<div class="muted">Sin datos del mercado de campeón.</div>';
+
+  // champion-market accuracy signal (works before the final too)
+  const fav=entries[0];
+  const elimFav=entries.filter(([c])=>elim.has(c));
+  let champNote;
+  if(results.champion){
+    const rank=entries.findIndex(([c])=>c===results.champion)+1;
+    const favWon=fav&&fav[0]===results.champion;
+    champNote=`Campeón oficial: <b>${nameOf(results.champion)}</b> · Kalshi lo tenía <b>#${rank||'—'}</b> ${rank?`(${entries[rank-1][1].toFixed(1)}%)`:''}. `
+      +(favWon?'<span class="ok">✅ El favorito de Kalshi ganó.</span>':'<span class="ko">❌ El favorito de Kalshi no ganó.</span>');
+  } else {
+    champNote=`Favorito de Kalshi: <b>${fav?`${nameOf(fav[0])} (${fav[1].toFixed(1)}%)`:'—'}</b>. `
+      +(elimFav.length?`<span class="ko">${elimFav.length} de sus favoritos ya están eliminados: ${elimFav.map(([c])=>c).join(", ")}.</span>`
+        :'Ninguno de sus favoritos ha sido eliminado todavía.');
+  }
+
+  // ----- per-match accuracy (Brier score + favorite hit-rate) -----
+  const M=K.matches||{};
+  const rows=[]; let brierSum=0, favHits=0, n=0;
+  for(const key of Object.keys(M)){
+    const i=+key; const a=results.group[i]; if(!a) continue;       // only scored games
+    const m=M[i]; const ph=(m.home||0)/100, pd=(m.draw||0)/100, pa=(m.away||0)/100;
+    const oh=a==="1"?1:0, od=a==="E"?1:0, oa=a==="2"?1:0;
+    const brier=(ph-oh)**2+(pd-od)**2+(pa-oa)**2;                  // 0 = perfect, 2 = worst
+    const opts=[["1",m.home||0],["E",m.draw||0],["2",m.away||0]].sort((x,y)=>y[1]-x[1]);
+    const favHit=opts[0][0]===a;
+    brierSum+=brier; favHits+=favHit?1:0; n++;
+    const sc=D.schedule[i], lbl=`${flagOf(sc.home)} ${sc.home} vs ${flagOf(sc.away)} ${sc.away}`;
+    const resWord=a==="1"?`gana ${sc.home}`:a==="E"?"empate":`gana ${sc.away}`;
+    rows.push(`<tr><td>${lbl}</td>
+      <td style="text-align:right">${(m.home||0)}% / ${(m.draw||0)}% / ${(m.away||0)}%</td>
+      <td>${resWord}</td>
+      <td style="text-align:center" class="${favHit?'ok':'ko'}">${favHit?'✓':'✗'}</td>
+      <td style="text-align:right" class="muted">${brier.toFixed(3)}</td></tr>`);
+  }
+  const matchCard = n
+    ? `<div class="card"><h3 style="margin-top:0">🎯 Precisión por partido</h3>
+        <div class="row" style="gap:16px;margin-bottom:10px">
+          <span class="pill">Partidos evaluados <b>${n}</b></span>
+          <span class="pill">Favorito acertó <b class="ok">${favHits}/${n}</b> (${(favHits/n*100).toFixed(0)}%)</span>
+          <span class="pill">Brier medio <b>${(brierSum/n).toFixed(3)}</b> <span class="muted">(0 = perfecto)</span></span>
+        </div>
+        <table><thead><tr><th>Partido</th><th style="text-align:right">Kalshi (1/X/2)</th><th>Resultado</th>
+          <th style="text-align:center">Fav.</th><th style="text-align:right">Brier</th></tr></thead>
+          <tbody>${rows.join("")}</tbody></table>
+        <div class="muted" style="font-size:12px;margin-top:6px">Brier = Σ(prob − resultado)² sobre 1/X/2. Más bajo = predicción más precisa.</div></div>`
+    : `<div class="card"><h3 style="margin-top:0">🎯 Precisión por partido</h3>
+        <div class="muted">Aún no hay odds de partidos cargadas en <code>kalshi.js</code>. Pega los porcentajes de Kalshi por partido (1/X/2) y aquí aparecerá el Brier score y el acierto del favorito.</div></div>`;
+
+  app.innerHTML=`
+    <div class="toprow"><span class="badge live">Kalshi vs realidad 📈</span>
+      <span class="muted">Mercado de predicciones de Kalshi · snapshot del ${K.asOf||'—'}</span></div>
+    ${matchCard}
+    <div class="card"><h3 style="margin-top:0">🏆 Mercado de campeón (Kalshi)</h3>
+      <div class="muted" style="font-size:12px;margin-bottom:8px">${champNote}</div>
+      ${champRows}</div>
+    <div class="card muted" style="font-size:12px">
+      Las probabilidades de Kalshi son una <b>foto fija</b> del ${K.asOf||'—'} y cambian con el mercado.
+      El mercado de campeón se resuelve al final del torneo; mientras tanto se marca qué favoritos van quedando eliminados (requiere mantener <code>eliminated:[]</code> en <code>results.js</code>).
+    </div>`;
+}
+
 function render(){
   window.onscroll=null;   // clear any prior scroll-spy
   tab==="leaderboard"?renderLeaderboard():
@@ -959,6 +1042,7 @@ function render(){
   tab==="tracked"?renderTracked():
   tab==="analysis"?renderAnalysis():
   tab==="compare"?renderCompare():
+  tab==="kalshi"?renderKalshi():
   tab==="stats"?renderStats():
   tab==="goals"?renderGoals():
   renderParticipant();
