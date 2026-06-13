@@ -1166,17 +1166,35 @@ function renderSim(){
   const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) <span class="muted" style="font-weight:400;font-size:12px">· elige de los ${simQF.size} de Cuartos · semifinalistas = los 4 · 5 pts c/u</span></h3>
     ${podSel(0,"🏆 Campeón",25)}${podSel(1,"🥈 Subcampeón",15)}${podSel(2,"🥉 3.º",10)}${podSel(3,"4.º",10)}</div>`;
 
-  // results
+  // project EVERY participant under this scenario → full ranking
+  const allSim=D.participants.map(p=>({name:p.name,t:simScore(p).total})).sort((a,b)=>b.t-a.t||a.name.localeCompare(b.name));
+  const Np=allSim.length, rankOf=n=>allSim.findIndex(x=>x.name===n)+1, winner=allSim[0];
+  const selSet=new Set(simNames.filter(Boolean));
+  const tiedAtTop=allSim.filter(x=>x.t===winner.t).length;
+
+  const winnerCard=`<div class="card"><h3 style="margin-top:0">🏆 Con este escenario, ganaría la Polla</h3>
+    <div style="font-size:19px;font-weight:800">${deco(winner.name)}${winner.name} <span class="total" style="font-size:19px">${winner.t} pts</span>${tiedAtTop>1?` <span class="muted" style="font-size:13px">· 🤝 empatado con ${tiedAtTop-1}</span>`:""}</div>
+    <div class="muted" style="font-size:12px;margin-top:4px">Top 5 · ${allSim.slice(0,5).map((x,i)=>`${i+1}. ${deco(x.name)}${x.name} (${x.t})`).join(" · ")}</div></div>`;
+
+  // projected leaderboard: top 10 + any selected participant outside it
+  const lbRow=(x,i)=>`<tr style="${selSet.has(x.name)?'background:rgba(58,210,159,.14)':''}"><td class="rank">${i+1}</td><td>${deco(x.name)}${x.name}</td><td style="text-align:right"><b>${x.t}</b></td></tr>`;
+  const top=allSim.slice(0,10).map((x,i)=>lbRow(x,i)).join("");
+  const extra=[...selSet].map(n=>rankOf(n)-1).filter(i=>i>=10).sort((a,b)=>a-b).map(i=>lbRow(allSim[i],i)).join("");
+  const lbCard=`<div class="card"><h3 style="margin-top:0">Clasificación proyectada</h3>
+    <table><thead><tr><th>#</th><th>Participante</th><th style="text-align:right">Pts</th></tr></thead>
+    <tbody>${top}${extra?`<tr><td colspan="3" class="muted" style="text-align:center">· · ·</td></tr>${extra}`:""}</tbody></table></div>`;
+
+  // per-participant breakdown for the selected ones
   const C=simNames.map(n=>n?D.participants.find(p=>p.name===n):null).filter(Boolean);
-  let results_html;
-  if(!C.length){ results_html=`<div class="card muted">Elige al menos un participante para simular.</div>`; }
+  let ptsCard="";
+  if(!C.length){ ptsCard=`<div class="card muted">Elige participantes arriba para ver su desglose y puesto proyectado.</div>`; }
   else{
     const data=C.map(p=>({p,r:simScore(p)}));
     const colH=data.map(d=>`<th style="text-align:right">${deco(d.p.name)}${d.p.name}</th>`).join("");
     const best=Math.max(...data.map(d=>d.r.total));
     const row=(label,fmt)=>{const cells=data.map(d=>`<td style="text-align:right">${fmt(d.r,d.p)}</td>`).join("");return `<tr><td>${label}</td>${cells}</tr>`;};
     const mk=(ok,pts)=>ok?`<span class="ok">✓ ${pts}</span>`:`<span class="muted">0</span>`;
-    results_html=`<div class="card"><h3 style="margin-top:0">📊 Puntos proyectados</h3>
+    ptsCard=`<div class="card"><h3 style="margin-top:0">📊 Puntos proyectados</h3>
       <table><thead><tr><th>Segmento</th>${colH}</tr></thead><tbody>
         ${row(`Fase de grupos <span class="muted">(real, ${data[0].r.gPlayed} jugados)</span>`, r=>`${r.grp} <span class="muted">(${r.gHits})</span>`)}
         ${row("R32 ×2", r=>`${r.r32h*2} <span class="muted">(${r.r32h})</span>`)}
@@ -1189,9 +1207,11 @@ function renderSim(){
         ${row("4.º", r=>mk(r.fo,10))}
         ${row("Goleador <span class=\"muted\">(real)</span>", r=>r.sc)}
         <tr style="font-weight:800"><td>Total proyectado</td>${data.map(d=>`<td style="text-align:right" class="${d.r.total===best&&C.length>1?'ok':''}"><b class="total">${d.r.total}</b>${d.r.total===best&&C.length>1?' ▲':''}</td>`).join("")}</tr>
+        <tr><td>Puesto proyectado</td>${data.map(d=>{const rk=rankOf(d.p.name);return `<td style="text-align:right"><b>#${rk}</b> <span class="muted">de ${Np}</span>${rk===1?' 🏆':''}</td>`;}).join("")}</tr>
       </tbody></table>
-      <div class="muted" style="font-size:11px;margin-top:6px">Grupos = puntos reales al momento. R32/R16/QF/semis/puestos = según el escenario de arriba. Goleador usa el resultado real si ya está definido.</div></div>`;
+      <div class="muted" style="font-size:11px;margin-top:6px">Grupos = puntos reales al momento. R32/R16/QF/semis/puestos = según el escenario. Goleador usa el resultado real si ya está definido. El puesto es contra los 193 participantes bajo este escenario.</div></div>`;
   }
+  const results_html = winnerCard + ptsCard + lbCard;
 
   app.innerHTML=`
     <div class="toprow"><span class="badge live">Simulador 🎲</span>
