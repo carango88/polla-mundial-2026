@@ -736,6 +736,7 @@ function matchPoll(i){
       ${row(`<span class="fl">${flagOf(m.away)}</span> ${m.away} gana`, c2, "away", r==="2")}
     </div></details>`;
 }
+let statTab="resumen";
 function renderStats(){
   const app=document.getElementById("app");
   const ps=D.participants, N=ps.length;
@@ -751,17 +752,14 @@ function renderStats(){
   const rankedS=scoreAll();
   const leader=rankedS[0];
   const tiedMax=scored.filter(s=>s===max).length;   // how many share the top score
-  // only flag tracked profiles (💯/💵) when they share the top score; ignore everyone else
   const maxTracked=TRACKED.filter(n=>{const r=rankedS.find(x=>x.p.name===n); return r&&r.s.total===max;})
     .map(n=>NAME_TAG[n]).join(" ");
 
   const card=(title,body,sub="")=>`<div class="card"><h3 style="margin-top:0">${title}${sub?` <span class="muted" style="font-weight:400">${sub}</span>`:""}</h3>${body}</div>`;
 
-  app.innerHTML=`
-    <div class="toprow"><span class="badge live">Estadísticas de la polla</span>
-      <span class="muted">${N} participantes · agregados sobre todas las selecciones</span></div>
-
-    <div class="duel-grid">
+  // each sub-section is shown one at a time via the chip bar
+  const sections=[
+    {id:"resumen", label:"📋 Resumen", html:`<div class="duel-grid">
       ${card("Puntaje actual",`
         <div class="kv"><span>Promedio</span><b>${avg}</b></div>
         <div class="kv"><span>Mediana</span><b>${med}</b></div>
@@ -769,32 +767,34 @@ function renderStats(){
         <div class="kv"><span>Mínimo</span><b>${min}</b></div>
         <div class="kv"><span>Puntos posibles</span><b class="muted">311</b></div>`,
         "partidos jugados hasta ahora")}
-      ${card("🥇 Campeón más elegido", barList(tally(ps.map(p=>p.champion)), teamFmt))}
-    </div>
-
-    <div class="duel-grid">
-      ${card("👟 Goleador más elegido", barList(tally(ps.map(p=>p.scorer)), plain))}
-      ${card("⭐ Semifinalistas más elegidos", barList(tally(ps.flatMap(p=>p.sf)), teamFmt))}
-    </div>
-
-    <div class="duel-grid">
-      ${card("🥈 Subcampeón más elegido", barList(tally(ps.map(p=>p.runnerUp)), teamFmt))}
-      ${card("🥉 3.º puesto más elegido", barList(tally(ps.map(p=>p.third)), teamFmt))}
-    </div>
-
-    <div class="duel-grid">
-      ${card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt, 48), "todos los elegidos")}
-      ${card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")}
-    </div>
-    ${card("Partidos más divididos — top 10",
+      ${card("🥇 Campeón más elegido", barList(tally(ps.map(p=>p.champion)), teamFmt))}</div>`},
+    {id:"scorer", label:"👟 Goleador", html:card("👟 Goleador más elegido", barList(tally(ps.map(p=>p.scorer)), plain, 48))},
+    {id:"sf", label:"⭐ Semifinalistas", html:card("⭐ Semifinalistas más elegidos", barList(tally(ps.flatMap(p=>p.sf)), teamFmt, 48))},
+    {id:"champion", label:"🥇 Campeón", html:card("🥇 Campeón más elegido", barList(tally(ps.map(p=>p.champion)), teamFmt, 48))},
+    {id:"runnerUp", label:"🥈 Subcampeón", html:card("🥈 Subcampeón más elegido", barList(tally(ps.map(p=>p.runnerUp)), teamFmt, 48))},
+    {id:"third", label:"🥉 3.º puesto", html:card("🥉 3.º puesto más elegido", barList(tally(ps.map(p=>p.third)), teamFmt, 48))},
+    {id:"qf", label:"Cuartos", html:card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt, 48), "todos los elegidos")},
+    {id:"r32", label:"R32", html:card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")},
+    {id:"divided", label:"⚖️ Divididos", html:card("Partidos más divididos — top 10",
       `<div class="muted" style="font-size:11px;margin-bottom:10px">
          <span class="spdot home"></span> local · <span class="spdot draw"></span> empate · <span class="spdot away"></span> visitante · <span style="margin-left:6px">% local/empate/visitante</span></div>
        ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,10).map(splitRow).join("")}`,
-      "donde más se reparten las predicciones")}
-    ${card("Predicciones por partido — fase de grupos",
-      D.groups.map(g=>`<div class="grp-h" style="margin-top:12px"><span>Grupo ${g.label}</span></div>
-        ${g.matches.map(i=>matchPoll(i)).join("")}`).join(""),
-      "clic en un partido para ver qué resultado eligió cada quién")}`;
+      "donde más se reparten las predicciones")},
+  ];
+  // one chip per group with its per-match breakdown
+  for(const g of D.groups) sections.push({id:"grp"+g.label, label:"Grupo "+g.label,
+    html:card(`Predicciones — Grupo ${g.label}`, g.matches.map(i=>matchPoll(i)).join(""), "clic en un partido para ver quién eligió qué")});
+
+  if(!sections.some(s=>s.id===statTab)) statTab=sections[0].id;
+  const cur=sections.find(s=>s.id===statTab);
+  const chips=sections.map(s=>`<button class="jchip ${s.id===statTab?'act':''}" data-sec="${s.id}">${s.label}</button>`).join("");
+
+  app.innerHTML=`
+    <div class="toprow"><span class="badge live">Estadísticas de la polla</span>
+      <span class="muted">${N} participantes · agregados sobre todas las selecciones</span></div>
+    <div class="jumpbar">${chips}</div>
+    ${cur.html}`;
+  document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{statTab=b.dataset.sec; renderStats();});
 }
 
 // ---- GOLEADORES: official scorers + golden-boot bets --------------------
