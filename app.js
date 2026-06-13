@@ -965,13 +965,23 @@ function renderCompare(){
     body=ptsTable+picksTable+setsTable;
   }
 
+  const dlist=`<datalist id="cmpnames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
   app.innerHTML=`<div class="toprow">
       <span class="muted" style="font-size:12px">Comparar:</span>
+      <input id="cmpsearch" class="search" list="cmpnames" placeholder="🔍 Buscar y añadir…" autocomplete="off">
       ${selBox(0)} ${selBox(1)} ${selBox(2)}
+      ${dlist}
     </div>${body}`;
   document.querySelectorAll(".cmpsel").forEach(s=>s.onchange=e=>{
     const i=+e.target.dataset.i; cmp[i]=e.target.value?dec(e.target.value):null; renderCompare();
   });
+  document.getElementById("cmpsearch").onchange=e=>{
+    const hit=D.participants.find(p=>p.name===e.target.value)
+            ||D.participants.find(p=>p.name.toLowerCase()===String(e.target.value||'').toLowerCase());
+    if(!hit) return;
+    let slot=[0,1,2].find(i=>!cmp[i]); if(slot===undefined) slot=0;   // first empty, else replace 1st
+    cmp[slot]=hit.name; renderCompare();
+  };
 }
 
 function render(){
