@@ -15,6 +15,7 @@ const flagOf = c => FLAGS[c] || "🏳️";
 // ---- results (answer key) state ----------------------------------------
 function blankResults(){
   return { group: Array(D.schedule.length).fill(null),
+           scores: Array(D.schedule.length).fill(null),  // [home,away] goals per group match
            r32:[], r16:[], qf:[], sf:[],
            fourth:"", third:"", runnerUp:"", champion:"", scorer:"",
            eliminated:[],     // teams that can no longer advance (knock out of contention)
@@ -26,6 +27,7 @@ function applyOfficial(r){
   const o = window.RESULTS;
   if(!o) return r;
   if(Array.isArray(o.group)) o.group.forEach((v,i)=>{ if(v) r.group[i]=v; });
+  if(Array.isArray(o.scores)) o.scores.forEach((v,i)=>{ if(v) r.scores[i]=v; });
   for(const k of ["r32","r16","qf","sf"]) if(Array.isArray(o[k])&&o[k].length) r[k]=o[k].slice();
   for(const k of ["fourth","third","runnerUp","champion","scorer"]) if(o[k]) r[k]=o[k];
   if(Array.isArray(o.eliminated)) r.eliminated=o.eliminated.slice();
