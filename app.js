@@ -1060,9 +1060,14 @@ function renderGroups(){
   const {tables, thirds, played}=computeGroups();
   const qualThird=new Set(thirds.slice(0,8).map(t=>t.team+"|"+t.group));
   const teamRow=c=>`<span class="fl">${flagOf(c)}</span> ${c} <span class="muted">${nameOf(c)}</span>`;
+  const playedIn={}; D.groups.forEach(g=>{ playedIn[g.label]=g.matches.filter(mi=>(results.scores||[])[mi]).length; });
 
-  // best-third ranking table
+  // best-third ranking table (thirds from groups that haven't started show neutral)
   const thirdRows=thirds.map((t,i)=>{
+    if(!playedIn[t.group]){
+      return `<tr style="opacity:.5"><td class="rank muted">–</td><td>${teamRow(t.team)} <span class="muted">(Gr. ${t.group})</span></td>
+        <td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td><span class="muted">por jugar</span></td></tr>`;
+    }
     const inTop=i<8;
     return `<tr style="${inTop?'background:rgba(255,211,78,.08)':'opacity:.6'}">
       <td class="rank">${i+1}</td><td>${teamRow(t.team)} <span class="muted">(Gr. ${t.group})</span></td>
@@ -1076,7 +1081,14 @@ function renderGroups(){
       <tbody>${thirdRows}</tbody></table></div>`;
 
   const groupCard=g=>{
+    const gplayed=playedIn[g.label];
     const rows=tables[g.label].map((t,i)=>{
+      if(!gplayed){   // group hasn't started — everyone equal, no ranking/marks
+        return `<tr><td class="rank muted">–</td><td>${teamRow(t.team)}</td>
+          <td style="text-align:right" class="muted">0</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">0</td>
+          <td style="text-align:right" class="muted">0:0</td><td style="text-align:right">0</td><td style="text-align:right"><b>0</b></td>
+          <td><span class="muted">por jugar</span></td></tr>`;
+      }
       let tint='', estado='';
       if(i<2){ tint='background:rgba(58,210,159,.10)'; estado='<span class="ok">✓ 1.º/2.º</span>'; }
       else if(i===2){ const q=qualThird.has(t.team+"|"+g.label);
@@ -1092,7 +1104,7 @@ function renderGroups(){
         <td style="text-align:right"><b>${t.pts}</b></td><td>${estado}</td></tr>`;
     }).join("");
     return `<div id="grp-${g.label}" class="card grp">
-      <h3 style="margin-top:0">Grupo ${g.label}</h3>
+      <h3 style="margin-top:0">Grupo ${g.label}${gplayed?'':' <span class="muted" style="font-weight:400;font-size:12px">· sin jugar</span>'}</h3>
       <table><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">PJ</th><th style="text-align:right">G</th><th style="text-align:right">E</th><th style="text-align:right">P</th><th style="text-align:right">GF:GC</th><th style="text-align:right">DG</th><th style="text-align:right">Pts</th><th>Estado</th></tr></thead>
         <tbody>${rows}</tbody></table></div>`;
   };
