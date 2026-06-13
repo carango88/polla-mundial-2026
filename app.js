@@ -1133,7 +1133,8 @@ function renderGroups(){
 // ---- SIMULADOR: what-if bracket scoring ---------------------------------
 // Group points = the REAL tally so far (from results). Knockout points come
 // from a hypothetical bracket the user builds: R32 ⊇ R16 ⊇ QF ⊇ final four.
-let simNames=[], simR32=null, simR16=null, simQF=null, simPodio=null, simScroll=0;
+let simNames=[], simR32=null, simR16=null, simQF=null, simPodio=null, simGoleador=null, simScroll=0;
+const SIM_OTRO="__OTRO__";   // "a scorer nobody picked" → 0 pts for everyone
 function simPopOrder(key){
   return tally(D.participants.flatMap(p=>{const v=p[key]; return Array.isArray(v)?v:(v?[v]:[]);})).map(e=>e[0]);
 }
@@ -1146,6 +1147,7 @@ function initSim(){
   const ex=new Set();
   const pick=key=>{ for(const c of simPopOrder(key)) if(simQF.has(c)&&!ex.has(c)){ex.add(c);return c;} for(const c of simQF) if(!ex.has(c)){ex.add(c);return c;} return ""; };
   simPodio=[pick("champion"),pick("runnerUp"),pick("third"),pick("fourth")];
+  simGoleador=simPopOrder("scorer")[0]||SIM_OTRO;   // default: most-picked golden boot
   if(!simNames.length) simNames=TRACKED.filter(n=>D.participants.some(p=>p.name===n)).slice(0,2);
 }
 function simScore(p){
@@ -1156,8 +1158,10 @@ function simScore(p){
   const champ=!!simPodio[0]&&p.champion===simPodio[0], ru=!!simPodio[1]&&p.runnerUp===simPodio[1];
   const th=!!simPodio[2]&&p.third===simPodio[2], fo=!!simPodio[3]&&p.fourth===simPodio[3];
   const place=(champ?P.champion:0)+(ru?P.runnerUp:0)+(th?P.third:0)+(fo?P.fourth:0);
-  const total=s.group+r32h*P.r32+r16h*P.r16+qfh*P.qf+sfh*P.sf+place+s.scPts;
-  return {grp:s.group,gHits:s.gHits,gPlayed:s.gPlayed,r32h,r16h,qfh,sfh,champ,ru,th,fo,place,sc:s.scPts,total};
+  const golHit=!!simGoleador && simGoleador!==SIM_OTRO && p.scorer && norm(p.scorer)===norm(simGoleador);
+  const sc=golHit?P.scorer:0;
+  const total=s.group+r32h*P.r32+r16h*P.r16+qfh*P.qf+sfh*P.sf+place+sc;
+  return {grp:s.group,gHits:s.gHits,gPlayed:s.gPlayed,r32h,r16h,qfh,sfh,champ,ru,th,fo,place,golHit,sc,total};
 }
 function renderSim(){
   if(!simR32) initSim();
@@ -1179,6 +1183,13 @@ function renderSim(){
     return `<div class="kv"><span>${label} <span class="muted">${pts} pts</span></span><select class="simpod" data-i="${i}"><option value="">—</option>${o}</select></div>`;};
   const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) <span class="muted" style="font-weight:400;font-size:12px">· elige de los ${simQF.size} de Cuartos · semifinalistas = los 4 · 5 pts c/u</span></h3>
     ${podSel(0,"🏆 Campeón",25)}${podSel(1,"🥈 Subcampeón",15)}${podSel(2,"🥉 3.º",10)}${podSel(3,"4.º",10)}</div>`;
+  const golList=tally(D.participants.map(p=>p.scorer));   // [surname, count] by popularity
+  const golCard=`<div class="card"><h3 style="margin-top:0">👟 Goleador (bota de oro) <span class="muted" style="font-weight:400;font-size:12px">· 15 pts</span></h3>
+    <div class="kv"><span>Goleador del torneo</span>
+      <select class="simgol" style="min-width:240px">
+        ${golList.map(([s,c])=>`<option value="${enc(s)}" ${simGoleador===s?'selected':''}>${s} (${c} eligieron)</option>`).join("")}
+        <option value="${SIM_OTRO}" ${simGoleador===SIM_OTRO?'selected':''}>Otro goleador</option>
+      </select></div></div>`;
 
   // project EVERY participant under this scenario → full ranking
   const allSim=D.participants.map(p=>({name:p.name,t:simScore(p).total})).sort((a,b)=>b.t-a.t||a.name.localeCompare(b.name));
@@ -1219,7 +1230,7 @@ function renderSim(){
         ${row("🥈 Subcampeón", r=>mk(r.ru,15))}
         ${row("🥉 3.º", r=>mk(r.th,10))}
         ${row("4.º", r=>mk(r.fo,10))}
-        ${row("Goleador <span class=\"muted\">(real)</span>", r=>r.sc)}
+        ${row(`👟 Goleador <span class="muted">(${simGoleador===SIM_OTRO?'otro':simGoleador})</span>`, r=>mk(r.golHit,15))}
         <tr style="font-weight:800"><td>Total proyectado</td>${data.map(d=>`<td style="text-align:right" class="${d.r.total===best&&C.length>1?'ok':''}"><b class="total">${d.r.total}</b>${d.r.total===best&&C.length>1?' ▲':''}</td>`).join("")}</tr>
         <tr><td>Puesto proyectado</td>${data.map(d=>{const rk=rankOf(d.p.name);return `<td style="text-align:right"><b>#${rk}</b> <span class="muted">de ${Np}</span>${rk===1?' 🏆':''}</td>`;}).join("")}</tr>
       </tbody></table>
@@ -1235,7 +1246,7 @@ function renderSim(){
       ${selBox(0)} ${selBox(1)} ${selBox(2)} ${dlist}</div>
     ${results_html}
     <div class="card muted" style="font-size:12px">Construye el escenario: marca quién pasa a R32, luego R16 (solo de los de R32), Cuartos (solo de R16) y ordena el final four (de los de Cuartos). Los puntos de arriba se actualizan al instante.</div>
-    ${r32grid}${r16grid}${qfgrid}${podioCard}`;
+    ${r32grid}${r16grid}${qfgrid}${podioCard}${golCard}`;
 
   document.querySelectorAll(".simsel").forEach(s=>s.onchange=e=>{simScroll=window.scrollY;simNames[+e.target.dataset.i]=e.target.value?dec(e.target.value):null;renderSim();});
   document.getElementById("simsearch").onchange=e=>{const hit=D.participants.find(p=>p.name===e.target.value);if(hit){simScroll=window.scrollY;const slot=[0,1,2].find(i=>!simNames[i]);simNames[slot===undefined?0:slot]=hit.name;renderSim();}};
@@ -1251,6 +1262,7 @@ function renderSim(){
     simPodio=simPodio.map((x,j)=> j!==i && x===v ? "" : x);   // keep distinct
     simPodio[i]=v; renderSim();
   });
+  document.querySelector(".simgol").onchange=e=>{simScroll=window.scrollY;simGoleador=e.target.value===SIM_OTRO?SIM_OTRO:dec(e.target.value);renderSim();};
   if(simScroll){ window.scrollTo(0,simScroll); simScroll=0; }
 }
 
