@@ -781,20 +781,37 @@ function renderStats(){
        ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,10).map(splitRow).join("")}`,
       "donde más se reparten las predicciones")},
   ];
-  // one chip per group with its per-match breakdown
-  for(const g of D.groups) sections.push({id:"grp"+g.label, label:"Grupo "+g.label,
-    html:card(`Predicciones — Grupo ${g.label}`, g.matches.map(i=>matchPoll(i)).join(""), "clic en un partido para ver quién eligió qué")});
+  // group chips don't switch sections — they jump to a group within one long
+  // stacked view of all groups (per-match prediction breakdowns)
+  const groupChips=D.groups.map(g=>({id:"grp"+g.label, label:"Grupo "+g.label}));
+  const allChips=[...sections.map(s=>({id:s.id,label:s.label})), ...groupChips];
+  if(!allChips.some(c=>c.id===statTab)) statTab=sections[0].id;
+  const isGroup=statTab.startsWith("grp");
 
-  if(!sections.some(s=>s.id===statTab)) statTab=sections[0].id;
-  const cur=sections.find(s=>s.id===statTab);
-  const chips=sections.map(s=>`<button class="jchip ${s.id===statTab?'act':''}" data-sec="${s.id}">${s.label}</button>`).join("");
+  const content = isGroup
+    ? `<div class="muted" style="font-size:12px;margin-bottom:6px">Predicciones por partido · clic en un partido para ver quién eligió qué · usa los botones para saltar de grupo</div>`
+      + D.groups.map(g=>`<div id="statgrp-${g.label}" class="card grp" style="margin-top:0">
+          <h3 style="margin-top:0">Grupo ${g.label}</h3>
+          ${g.matches.map(i=>matchPoll(i)).join("")}</div>`).join("")
+    : sections.find(s=>s.id===statTab).html;
+
+  const chips=allChips.map(c=>`<button class="jchip ${c.id===statTab?'act':''}" data-sec="${c.id}">${c.label}</button>`).join("");
 
   app.innerHTML=`
     <div class="toprow"><span class="badge live">Estadísticas de la polla</span>
       <span class="muted">${N} participantes · agregados sobre todas las selecciones</span></div>
     <div class="jumpbar">${chips}</div>
-    ${cur.html}`;
-  document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{statTab=b.dataset.sec; renderStats();});
+    ${content}`;
+  document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{
+    const target=b.dataset.sec;
+    if(isGroup && target.startsWith("grp")){
+      // already showing all groups — just highlight + scroll, no full re-render
+      statTab=target;
+      document.querySelectorAll(".jumpbar .jchip").forEach(x=>x.classList.toggle("act",x.dataset.sec===target));
+      document.getElementById("statgrp-"+target.slice(3))?.scrollIntoView({behavior:"smooth",block:"start"});
+    } else { statTab=target; renderStats(); }
+  });
+  if(isGroup) document.getElementById("statgrp-"+statTab.slice(3))?.scrollIntoView({block:"start"});
 }
 
 // ---- GOLEADORES: official scorers + golden-boot bets --------------------
