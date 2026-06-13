@@ -265,6 +265,7 @@ const QUICK_PROFILES = [
   "SEBAS BHABHA Y JOSE ROBERTO ARANGO",
   "ROBERTO ARANGO",
   "MARIA CABAL",
+  "LUIS GUILLERMO LONDOÑO",
 ];
 function renderParticipant(){
   const app=document.getElementById("app");
