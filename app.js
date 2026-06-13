@@ -267,6 +267,10 @@ const QUICK_PROFILES = [
   "MARIA CABAL",
   "LUIS GUILLERMO LONDOÑO",
   "PABLO LONDOÑO MEJIA",
+  "MIGUEL LONDONO",
+  "CIPRIANO LONDONO",
+  "MATEO LONDONO",
+  "LA GABRIELINA",
 ];
 function renderParticipant(){
   const app=document.getElementById("app");
