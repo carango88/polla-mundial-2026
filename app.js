@@ -266,6 +266,7 @@ const QUICK_PROFILES = [
   "ROBERTO ARANGO",
   "MARIA CABAL",
   "LUIS GUILLERMO LONDOÑO",
+  "PABLO LONDOÑO MEJIA",
 ];
 function renderParticipant(){
   const app=document.getElementById("app");
