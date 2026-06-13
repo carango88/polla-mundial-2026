@@ -749,11 +749,17 @@ function renderGoals(){
   const maxG=goals.length?goals[0].goals:1;
   const lead=maxG; // current leading goal tally
 
+  // how many participants bet on each player as golden boot (matched by surname)
+  const pickCount={};
+  for(const p of D.participants){ if(p.scorer){ const sn=norm(p.scorer.split(" ").pop()); pickCount[sn]=(pickCount[sn]||0)+1; } }
+
   // official scorer table
   const scorerRows = goals.length ? goals.map((g,i)=>{
     const leader = g.goals===lead;
+    const bets = pickCount[norm(g.player.split(" ").pop())]||0;
     return `<div class="barrow">
-      <span class="lbl">${i+1}. <span class="fl">${flagOf(g.team)}</span> ${g.player} <span class="muted">${g.team}</span></span>
+      <span class="lbl">${i+1}. <span class="fl">${flagOf(g.team)}</span> ${g.player} <span class="muted">${g.team}</span>
+        <span class="${bets?'ok':'muted'}" title="${bets} participantes lo eligieron como goleador">(${bets})</span></span>
       <span class="track"><span class="fill" style="width:${(g.goals/maxG*100).toFixed(0)}%"></span></span>
       <span class="val">${'⚽'.repeat(Math.min(g.goals,5))} <b>${g.goals}</b>${leader?' 👑':''}</span></div>`;
   }).join("") : '<div class="muted">Aún no hay goles registrados.</div>';
@@ -780,7 +786,9 @@ function renderGoals(){
     <div class="toprow"><span class="badge live">Goleadores ⚽</span>
       <span class="muted">${totalGoals} goles en el torneo · ${off}</span></div>
     <div class="duel-grid">
-      <div class="card"><h3 style="margin-top:0">Tabla de goleadores (oficial)</h3>${scorerRows}</div>
+      <div class="card"><h3 style="margin-top:0">Tabla de goleadores (oficial)</h3>
+        <div class="muted" style="font-size:12px;margin-bottom:8px">(n) = participantes que lo eligieron como bota de oro.</div>
+        ${scorerRows}</div>
       <div class="card"><h3 style="margin-top:0">Bota de oro — apuestas de la polla</h3>
         <div class="muted" style="font-size:12px;margin-bottom:8px">Apellidos elegidos por los participantes (⚽ = ya anotó).</div>
         ${betRows}</div>
