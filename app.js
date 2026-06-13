@@ -556,10 +556,12 @@ function finalistsCard(name){
   </div>`;
 }
 
-function renderTracked(){
-  const app=document.getElementById("app");
-  const players=TRACKED.map(n=>D.participants.find(p=>p.name===n)).filter(Boolean);
-  if(!players.length){app.innerHTML='<div class="card">No encontré los perfiles seguidos.</div>';return;}
+// Builds the full analysis (summary + key diffs + prizes + picks + podio +
+// segment table) for a list of participant names. Used by both "Los que son"
+// (fixed profiles) and "Análisis" (any participant chosen by the user).
+function analysisBody(names){
+  const players=names.map(n=>D.participants.find(p=>p.name===n)).filter(Boolean);
+  if(!players.length) return "";
   const ranked=scoreAll();
   const rankOf=n=>ranked.findIndex(r=>r.p.name===n)+1;
   const bestOther=n=>Math.max(...ranked.filter(r=>r.p.name!==n).map(r=>r.s.total));
@@ -609,21 +611,53 @@ function renderTracked(){
       <td class="muted">máx ${x.o.max}</td></tr>
     </tbody></table></div>`;
 
-  app.innerHTML=`
-    <div class="toprow">
-      <span class="badge live">Perfiles que sigo</span>
-      <span class="muted">Logrados (verde) · Ganables según sus selecciones y equipos aún vivos (dorado) · Perdidos (rojo). Sobre 311.</span>
-    </div>
+  return `
     <div class="duel-grid">${O.map(card).join("")}</div>
     <div class="duel-grid">${O.map(x=>keyCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(x=>prizeCard(x.p.name,allO)).join("")}</div>
     <div class="duel-grid">${O.map(x=>picksCard(x.p.name)).join("")}</div>
     <div class="duel-grid">${O.map(x=>finalistsCard(x.p.name)).join("")}</div>
-    <div class="duel-grid">${O.map(segTable).join("")}</div>
+    <div class="duel-grid">${O.map(segTable).join("")}</div>`;
+}
+
+function renderTracked(){
+  const app=document.getElementById("app");
+  const present=TRACKED.filter(n=>D.participants.some(p=>p.name===n));
+  if(!present.length){app.innerHTML='<div class="card">No encontré los perfiles seguidos.</div>';return;}
+  app.innerHTML=`
+    <div class="toprow">
+      <span class="badge live">Perfiles que sigo</span>
+      <span class="muted">Logrados (verde) · Ganables según sus selecciones y equipos aún vivos (dorado) · Perdidos (rojo). Sobre 311.</span>
+    </div>
+    ${analysisBody(TRACKED)}
     <div class="card muted" style="font-size:12px">
       “Ganables” cuenta solo los puntos que <b>las selecciones de cada perfil</b> aún pueden conseguir: un equipo que no eligió —o que ya quedó eliminado— no suma, aunque siga el segmento abierto.
       A medida que se registren resultados y eliminaciones en <code>results.js</code>, estos máximos bajan automáticamente.
     </div>`;
+}
+
+// Same analysis as "Los que son" but for any participant(s) the user picks.
+let anaNames=[];
+function renderAnalysis(){
+  const app=document.getElementById("app");
+  const ranked=scoreAll();
+  if(!anaNames.length) anaNames=[ranked[0]?ranked[0].p.name:null];
+  const byName=[...D.participants].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const opts=sel=>byName.map(p=>`<option value="${enc(p.name)}" ${p.name===sel?'selected':''}>${p.name}</option>`).join("");
+  const selBox=i=>`<select class="anasel" data-i="${i}" style="min-width:210px">
+    <option value="">${i===0?'Selecciona…':'+ comparar con otro (opcional)'}</option>${opts(anaNames[i])}</select>`;
+  const chosen=anaNames.filter(n=>n&&D.participants.some(p=>p.name===n));
+  const body=chosen.length
+    ? analysisBody(chosen)
+    : '<div class="card muted">Elige un participante para ver su análisis completo.</div>';
+  app.innerHTML=`<div class="toprow">
+      <span class="muted" style="font-size:12px">Analizar:</span>
+      ${selBox(0)} ${selBox(1)}
+      <span class="muted" style="font-size:12px">Logrados (verde) · Ganables (dorado) · Perdidos (rojo). Sobre 311.</span>
+    </div>${body}`;
+  document.querySelectorAll(".anasel").forEach(s=>s.onchange=e=>{
+    const i=+e.target.dataset.i; anaNames[i]=e.target.value?dec(e.target.value):null; renderAnalysis();
+  });
 }
 
 // ---- ESTADÍSTICAS: pool-wide aggregate stats ---------------------------
@@ -923,6 +957,7 @@ function render(){
   tab==="leaderboard"?renderLeaderboard():
   tab==="results"?renderResults():
   tab==="tracked"?renderTracked():
+  tab==="analysis"?renderAnalysis():
   tab==="compare"?renderCompare():
   tab==="stats"?renderStats():
   tab==="goals"?renderGoals():
