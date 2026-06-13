@@ -269,7 +269,8 @@ const QUICK_PROFILES = [
 function renderParticipant(){
   const app=document.getElementById("app");
   const ranked=scoreAll();
-  const opts=ranked.map(r=>`<option value="${enc(r.p.name)}" ${r.p.name===detailName?'selected':''}>${r.p.name}</option>`).join("");
+  const byName=[...D.participants].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const opts=byName.map(p=>`<option value="${enc(p.name)}" ${p.name===detailName?'selected':''}>${p.name}</option>`).join("");
   const quick=QUICK_PROFILES.filter(n=>D.participants.some(p=>p.name===n))
     .map(n=>`<button class="jchip qa ${n===detailName?'act':''}" data-n="${enc(n)}">${deco(n)}${n}</button>`).join("");
   app.innerHTML=`<div class="toprow">
@@ -807,7 +808,8 @@ function renderCompare(){
     const def=i=>(TRACKED[i]&&D.participants.some(p=>p.name===TRACKED[i]))?TRACKED[i]:(ranked[i]?ranked[i].p.name:null);
     cmp=[def(0),def(1)];
   }
-  const opts=sel=>ranked.map(r=>`<option value="${enc(r.p.name)}" ${r.p.name===sel?'selected':''}>${r.p.name}</option>`).join("");
+  const byName=[...D.participants].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const opts=sel=>byName.map(p=>`<option value="${enc(p.name)}" ${p.name===sel?'selected':''}>${p.name}</option>`).join("");
   const selBox=i=>`<select class="cmpsel" data-i="${i}" style="min-width:200px">
     <option value="">${i<2?'Selecciona…':'+ 3.º (opcional)'}</option>${opts(cmp[i])}</select>`;
 
