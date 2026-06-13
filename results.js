@@ -16,6 +16,7 @@ window.RESULTS = {
     g[1] = "1"; // Match 2: South Korea 2–1 Czechia (KOR win)
     // ── Jun 12 ──────────────────────────────────────────────
     g[2] = "E"; // Match 3: Canada 1–1 Bosnia & Herzegovina (draw)
+    g[3] = "1"; // Match 4: United States 3–1 Paraguay (USA win)
     return g;
   })(),
 
@@ -31,5 +32,8 @@ window.RESULTS = {
     { player: "O. Hyeon-gyu", team: "KOR", goals: 1 },  // Jun 11 vs CZE (80')
     { player: "J. Lukić",    team: "BIH", goals: 1 },   // Jun 12 vs CAN (21')
     { player: "C. Larin",    team: "CAN", goals: 1 },   // Jun 12 vs BIH (78')
+    { player: "F. Balogun",  team: "USA", goals: 2 },   // Jun 12 vs PAR (31', 45+5')
+    { player: "Maurício",    team: "PAR", goals: 1 },   // Jun 12 vs USA (73')
+    // + own goal D. Bobadilla (PAR) 7' → USA's 3rd goal, not a golden-boot goal
   ]
 };
