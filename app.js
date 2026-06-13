@@ -1116,6 +1116,110 @@ function renderGroups(){
   });
 }
 
+// ---- SIMULADOR: what-if bracket scoring ---------------------------------
+// Group points = the REAL tally so far (from results). Knockout points come
+// from a hypothetical bracket the user builds: R32 ⊇ R16 ⊇ QF ⊇ final four.
+let simNames=[], simR32=null, simR16=null, simQF=null, simPodio=null, simScroll=0;
+function simPopOrder(key){
+  return tally(D.participants.flatMap(p=>{const v=p[key]; return Array.isArray(v)?v:(v?[v]:[]);})).map(e=>e[0]);
+}
+function initSim(){
+  const r32o=simPopOrder("r32");
+  simR32=new Set(r32o.slice(0,32));
+  const rank=(set,order,n)=>[...set].sort((a,b)=>(order.indexOf(a)+1||999)-(order.indexOf(b)+1||999)).slice(0,n);
+  simR16=new Set(rank(simR32, simPopOrder("r16"), 16));
+  simQF =new Set(rank(simR16, simPopOrder("qf"), 8));
+  const ex=new Set();
+  const pick=key=>{ for(const c of simPopOrder(key)) if(simQF.has(c)&&!ex.has(c)){ex.add(c);return c;} for(const c of simQF) if(!ex.has(c)){ex.add(c);return c;} return ""; };
+  simPodio=[pick("champion"),pick("runnerUp"),pick("third"),pick("fourth")];
+  if(!simNames.length) simNames=TRACKED.filter(n=>D.participants.some(p=>p.name===n)).slice(0,2);
+}
+function simScore(p){
+  const s=scoreParticipant(p);                 // s.group = real group points so far
+  const cnt=(picks,set)=>picks.filter(c=>set.has(c)).length;
+  const r32h=cnt(p.r32,simR32), r16h=cnt(p.r16,simR16), qfh=cnt(p.qf,simQF);
+  const sfSet=new Set(simPodio.filter(Boolean)), sfh=cnt(p.sf,sfSet);
+  const champ=!!simPodio[0]&&p.champion===simPodio[0], ru=!!simPodio[1]&&p.runnerUp===simPodio[1];
+  const th=!!simPodio[2]&&p.third===simPodio[2], fo=!!simPodio[3]&&p.fourth===simPodio[3];
+  const place=(champ?P.champion:0)+(ru?P.runnerUp:0)+(th?P.third:0)+(fo?P.fourth:0);
+  const total=s.group+r32h*P.r32+r16h*P.r16+qfh*P.qf+sfh*P.sf+place+s.scPts;
+  return {grp:s.group,gHits:s.gHits,gPlayed:s.gPlayed,r32h,r16h,qfh,sfh,champ,ru,th,fo,place,sc:s.scPts,total};
+}
+function renderSim(){
+  if(!simR32) initSim();
+  const app=document.getElementById("app");
+  const byName=[...D.participants].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const opts=sel=>byName.map(p=>`<option value="${enc(p.name)}" ${p.name===sel?'selected':''}>${p.name}</option>`).join("");
+  const selBox=i=>`<select class="simsel" data-i="${i}" style="min-width:190px"><option value="">${i===0?'Participante…':'+ otro (opcional)'}</option>${opts(simNames[i])}</select>`;
+  const dlist=`<datalist id="simnames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
+
+  const chip=(c,round,on)=>`<span class="pk ${on?'pk-ok':''} simchip" data-round="${round}" data-c="${c}" style="cursor:pointer"><span class="fl">${flagOf(c)}</span> ${c}</span>`;
+  const grid=(cands,set,round,max)=>`<div class="card">
+    <h3 style="margin-top:0">${round.toUpperCase()} <span class="muted" style="font-weight:400;font-size:12px">· ${set.size}/${max} · ${P[round.toLowerCase()]||({r32:2,r16:3,qf:4})[round.toLowerCase()]} pts c/u</span></h3>
+    <div class="pkwrap">${cands.map(c=>chip(c,round.toLowerCase(),set.has(c))).join("")}</div></div>`;
+
+  const r32grid=grid(D.teams,simR32,"R32",32);
+  const r16grid=grid([...simR32].sort(),simR16,"R16",16);
+  const qfgrid =grid([...simR16].sort(),simQF,"QF",8);
+  const podSel=(i,label,pts)=>{const o=[...simQF].sort().map(c=>`<option value="${c}" ${simPodio[i]===c?'selected':''}>${nameOf(c)} (${c})</option>`).join("");
+    return `<div class="kv"><span>${label} <span class="muted">${pts} pts</span></span><select class="simpod" data-i="${i}"><option value="">—</option>${o}</select></div>`;};
+  const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) <span class="muted" style="font-weight:400;font-size:12px">· elige de los ${simQF.size} de Cuartos · semifinalistas = los 4 · 5 pts c/u</span></h3>
+    ${podSel(0,"🏆 Campeón",25)}${podSel(1,"🥈 Subcampeón",15)}${podSel(2,"🥉 3.º",10)}${podSel(3,"4.º",10)}</div>`;
+
+  // results
+  const C=simNames.map(n=>n?D.participants.find(p=>p.name===n):null).filter(Boolean);
+  let results_html;
+  if(!C.length){ results_html=`<div class="card muted">Elige al menos un participante para simular.</div>`; }
+  else{
+    const data=C.map(p=>({p,r:simScore(p)}));
+    const colH=data.map(d=>`<th style="text-align:right">${deco(d.p.name)}${d.p.name}</th>`).join("");
+    const best=Math.max(...data.map(d=>d.r.total));
+    const row=(label,fmt)=>{const cells=data.map(d=>`<td style="text-align:right">${fmt(d.r,d.p)}</td>`).join("");return `<tr><td>${label}</td>${cells}</tr>`;};
+    const mk=(ok,pts)=>ok?`<span class="ok">✓ ${pts}</span>`:`<span class="muted">0</span>`;
+    results_html=`<div class="card"><h3 style="margin-top:0">📊 Puntos proyectados</h3>
+      <table><thead><tr><th>Segmento</th>${colH}</tr></thead><tbody>
+        ${row(`Fase de grupos <span class="muted">(real, ${data[0].r.gPlayed} jugados)</span>`, r=>`${r.grp} <span class="muted">(${r.gHits})</span>`)}
+        ${row("R32 ×2", r=>`${r.r32h*2} <span class="muted">(${r.r32h})</span>`)}
+        ${row("Octavos ×3", r=>`${r.r16h*3} <span class="muted">(${r.r16h})</span>`)}
+        ${row("Cuartos ×4", r=>`${r.qfh*4} <span class="muted">(${r.qfh})</span>`)}
+        ${row("Semifinalistas ×5", r=>`${r.sfh*5} <span class="muted">(${r.sfh})</span>`)}
+        ${row("🏆 Campeón", r=>mk(r.champ,25))}
+        ${row("🥈 Subcampeón", r=>mk(r.ru,15))}
+        ${row("🥉 3.º", r=>mk(r.th,10))}
+        ${row("4.º", r=>mk(r.fo,10))}
+        ${row("Goleador <span class=\"muted\">(real)</span>", r=>r.sc)}
+        <tr style="font-weight:800"><td>Total proyectado</td>${data.map(d=>`<td style="text-align:right" class="${d.r.total===best&&C.length>1?'ok':''}"><b class="total">${d.r.total}</b>${d.r.total===best&&C.length>1?' ▲':''}</td>`).join("")}</tr>
+      </tbody></table>
+      <div class="muted" style="font-size:11px;margin-top:6px">Grupos = puntos reales al momento. R32/R16/QF/semis/puestos = según el escenario de arriba. Goleador usa el resultado real si ya está definido.</div></div>`;
+  }
+
+  app.innerHTML=`
+    <div class="toprow"><span class="badge live">Simulador 🎲</span>
+      <span class="muted" style="font-size:12px">Escenario hipotético · grupos reales + eliminatorias que tú defines</span></div>
+    <div class="toprow"><span class="muted" style="font-size:12px">Participantes:</span>
+      <input id="simsearch" class="search" list="simnames" placeholder="🔍 Buscar y añadir…" autocomplete="off">
+      ${selBox(0)} ${selBox(1)} ${selBox(2)} ${dlist}</div>
+    ${results_html}
+    <div class="card muted" style="font-size:12px">Construye el escenario: marca quién pasa a R32, luego R16 (solo de los de R32), Cuartos (solo de R16) y ordena el final four (de los de Cuartos). Los puntos de arriba se actualizan al instante.</div>
+    ${r32grid}${r16grid}${qfgrid}${podioCard}`;
+
+  document.querySelectorAll(".simsel").forEach(s=>s.onchange=e=>{simScroll=window.scrollY;simNames[+e.target.dataset.i]=e.target.value?dec(e.target.value):null;renderSim();});
+  document.getElementById("simsearch").onchange=e=>{const hit=D.participants.find(p=>p.name===e.target.value);if(hit){simScroll=window.scrollY;const slot=[0,1,2].find(i=>!simNames[i]);simNames[slot===undefined?0:slot]=hit.name;renderSim();}};
+  document.querySelectorAll(".simchip").forEach(el=>el.onclick=()=>{
+    simScroll=window.scrollY; const c=el.dataset.c, r=el.dataset.round;
+    if(r==="r32"){ if(simR32.has(c)){simR32.delete(c);simR16.delete(c);simQF.delete(c);simPodio=simPodio.map(x=>x===c?"":x);} else if(simR32.size<32) simR32.add(c); }
+    else if(r==="r16"){ if(simR16.has(c)){simR16.delete(c);simQF.delete(c);simPodio=simPodio.map(x=>x===c?"":x);} else if(simR16.size<16&&simR32.has(c)) simR16.add(c); }
+    else if(r==="qf"){ if(simQF.has(c)){simQF.delete(c);simPodio=simPodio.map(x=>x===c?"":x);} else if(simQF.size<8&&simR16.has(c)) simQF.add(c); }
+    renderSim();
+  });
+  document.querySelectorAll(".simpod").forEach(s=>s.onchange=e=>{
+    simScroll=window.scrollY; const i=+e.target.dataset.i, v=e.target.value;
+    simPodio=simPodio.map((x,j)=> j!==i && x===v ? "" : x);   // keep distinct
+    simPodio[i]=v; renderSim();
+  });
+  if(simScroll){ window.scrollTo(0,simScroll); simScroll=0; }
+}
+
 function render(){
   window.onscroll=null;   // clear any prior scroll-spy
   tab==="leaderboard"?renderLeaderboard():
@@ -1124,6 +1228,7 @@ function render(){
   tab==="tracked"?renderTracked():
   tab==="analysis"?renderAnalysis():
   tab==="compare"?renderCompare():
+  tab==="sim"?renderSim():
   tab==="stats"?renderStats():
   tab==="goals"?renderGoals():
   renderParticipant();
