@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Polla Mundial 2026</title>
 <style>
 :root{
@@ -188,8 +191,15 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 </header>
 <main id="app"></main>
 
-<script src="data.js?v=15"></script>
-<script src="results.js?v=15"></script>
-<script src="app.js?v=15"></script>
+<script>
+// Load data/results/app with a per-load timestamp so the browser always fetches
+// the newest files — no manual cache-busting (?fresh=) needed. Order preserved.
+(function(){
+  var t = Date.now();
+  ["data.js","results.js","app.js"].forEach(function(f){
+    document.write('<scr'+'ipt src="'+f+'?t='+t+'"></scr'+'ipt>');
+  });
+})();
+</script>
 </body>
 </html>
