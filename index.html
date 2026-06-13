@@ -157,12 +157,16 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
   header{padding:10px 12px;gap:8px;flex-wrap:wrap;align-items:flex-start}
   header h1{font-size:16px}
   header .sub{font-size:11px}
-  /* tabs become a full-width horizontal scroller */
-  .tabs{margin-left:0;width:100%;order:3;overflow-x:auto;flex-wrap:nowrap;
-    -webkit-overflow-scrolling:touch;padding-bottom:4px;gap:6px;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{padding:7px 12px;font-size:13px;white-space:nowrap;flex:0 0 auto}
-  main{padding:12px 12px}
+  /* app-style fixed bottom icon nav */
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;width:100%;margin:0;
+    display:flex;justify-content:space-around;gap:0;
+    background:rgba(23,29,51,.97);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+    padding:6px 2px calc(6px + env(safe-area-inset-bottom));overflow:visible}
+  .tab{flex:1 1 0;min-width:0;padding:5px 2px;border-radius:9px;border:1px solid transparent}
+  .tab .te{font-size:20px}
+  .tab .tl{display:none}                       /* icons only */
+  .tab.active{background:var(--panel2);border-color:var(--accent)}
+  main{padding:12px 12px 78px}                 /* clear the fixed bottom bar */
   .card{padding:12px;border-radius:10px;margin-bottom:12px}
   h3{font-size:13px;margin:12px 0 8px}
   /* any data table scrolls sideways instead of breaking the layout */
@@ -176,6 +180,13 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
   .toprow{gap:8px}
   select,input{font-size:16px}            /* ≥16px stops iOS auto-zoom on focus */
   .pill{font-size:10px;padding:2px 7px}
+  /* sub-chip bars (Grupos Live / Estadísticas) scroll in one row, not a tall block */
+  .jumpbar{position:static;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px}
+  .jumpbar::-webkit-scrollbar{display:none}
+  /* dropdowns/search share rows and stay tappable instead of forced-wide */
+  .toprow select,.toprow input{min-width:0 !important;flex:1 1 150px}
+  /* selection chips a touch larger for tapping */
+  .pk{font-size:12px;padding:4px 9px}
 }
 </style>
 </head>
