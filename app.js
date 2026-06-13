@@ -74,7 +74,7 @@ function scoreAll(){
 
 // ---- routing ------------------------------------------------------------
 let tab="leaderboard", sortKey="total", detailName=null;
-const SECONDARY=["compare","sim","stats","goals","tracked"];
+const SECONDARY=["groups","goals","sim","tracked","stats"];
 function selectTab(name){
   tab=name;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
