@@ -1,0 +1,40 @@
+name: Update results
+
+# Auto-refresh results.js from ESPN every few hours during the tournament.
+on:
+  schedule:
+    - cron: "0 */2 * * *"   # every 2 hours (UTC)
+  workflow_dispatch:         # allow manual "Run workflow" button
+
+permissions:
+  contents: write            # needed to commit results.js back
+
+concurrency:
+  group: update-results
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch latest results from ESPN
+        run: node update_results.js
+
+      - name: Commit results.js if it changed
+        run: |
+          if git diff --quiet -- results.js; then
+            echo "No changes — nothing to commit."
+          else
+            git config user.name "results-bot"
+            git config user.email "actions@github.com"
+            git add results.js
+            git commit -m "Auto-update results.js from ESPN [skip ci]"
+            git push
+            echo "results.js updated and pushed."
+          fi
