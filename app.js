@@ -869,17 +869,42 @@ function renderCompare(){
       </tbody></table></div>`;
 
     // knockout sets — count each picked + how many ALL of them share
-    const setRow=(key,label,n)=>{
+    const KO=[["r32","Ronda de 32",32],["r16","Octavos",16],["qf","Cuartos",8],["sf","Semifinalistas",4]];
+    const elimSet=new Set(results.eliminated||[]);
+    const pkChip=(c,key)=>{
+      const inSet=(results[key]||[]).includes(c);
+      const cls=inSet?"pk-ok":(elimSet.has(c)?"pk-out":"pk-pend");
+      return `<span class="pk ${cls}"><span class="fl">${flagOf(c)}</span> ${c}</span>`;
+    };
+    const setRow=([key,label,n])=>{
       const sets=data.map(d=>new Set(d.p[key]));
       const inter=[...sets[0]].filter(c=>sets.every(s=>s.has(c)));
       const cells=data.map(d=>`<td style="text-align:right">${d.p[key].length}/${n}</td>`).join("");
       return `<tr><td>${label}</td>${cells}<td style="text-align:right" class="ok">${inter.length}</td></tr>`;
     };
+    // per-round breakdown of the teams each one picked that NOT everyone shares
+    const diffBlock=([key,label])=>{
+      const sets=data.map(d=>new Set(d.p[key]));
+      const inter=new Set([...sets[0]].filter(c=>sets.every(s=>s.has(c))));
+      const perP=data.map(d=>d.p[key].filter(c=>!inter.has(c)));
+      const totalDiff=perP.reduce((a,b)=>a+b.length,0);
+      if(!totalDiff) return "";
+      const cols=data.map((d,i)=>`<div style="flex:1;min-width:150px">
+        <div class="muted" style="font-size:11px;margin-bottom:4px">${deco(d.p.name)}${d.p.name}</div>
+        <div class="pkwrap">${perP[i].length?perP[i].map(c=>pkChip(c,key)).join(""):'<span class="muted">— sin diferencias</span>'}</div></div>`).join("");
+      return `<div style="margin-top:14px">
+        <div class="pkhead">${label} <span class="muted">· ${totalDiff} selecciones no compartidas</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">${cols}</div></div>`;
+    };
+    const diffs=KO.map(diffBlock).join("");
     const setsTable=`<div class="card"><h3 style="margin-top:0">🔁 Coincidencias en eliminatorias</h3>
       <div class="muted" style="font-size:12px;margin-bottom:8px">Equipos que eligió cada uno y cuántos comparten <b>todos</b> los seleccionados.</div>
       <table><thead><tr><th>Ronda</th>${colH}<th style="text-align:right">En común</th></tr></thead><tbody>
-        ${setRow("r32","Ronda de 32",32)}${setRow("r16","Octavos",16)}${setRow("qf","Cuartos",8)}${setRow("sf","Semifinalistas",4)}
-      </tbody></table></div>`;
+        ${KO.map(setRow).join("")}
+      </tbody></table>
+      <h3>🔀 Diferencias por ronda</h3>
+      <div class="muted" style="font-size:12px;margin-bottom:4px">Equipos que NO todos comparten — los que marcan la diferencia. ✓ verde = ya clasificó · rojo tachado = eliminado.</div>
+      ${diffs||'<div class="muted">Eligieron exactamente los mismos equipos en todas las rondas.</div>'}</div>`;
 
     body=ptsTable+picksTable+setsTable;
   }
