@@ -1001,10 +1001,122 @@ function renderCompare(){
   };
 }
 
+// ---- GRUPOS: live standings + qualification projection (FIFA Art. 12-13) ---
+// Sort a group applying: points → head-to-head (pts/GD/GF among tied) → overall
+// GD → overall GF → name. (Cards & FIFA-ranking tiebreakers are not modelled.)
+function sortGroup(stats, g){
+  const arr=[...stats].sort((a,b)=>b.pts-a.pts);
+  const out=[]; let i=0;
+  while(i<arr.length){
+    let j=i; while(j<arr.length && arr[j].pts===arr[i].pts) j++;
+    const tied=arr.slice(i,j);
+    if(tied.length>1){
+      const ids=new Set(tied.map(t=>t.team));
+      const h={}; tied.forEach(t=>h[t.team]={pts:0,gf:0,gc:0});
+      for(const mi of g.matches){
+        const sc=(results.scores||[])[mi]; if(!sc) continue;
+        const m=D.schedule[mi];
+        if(ids.has(m.home)&&ids.has(m.away)){
+          const [x,y]=sc, H=h[m.home], A=h[m.away];
+          H.gf+=x;H.gc+=y;A.gf+=y;A.gc+=x;
+          if(x>y)H.pts+=3; else if(x<y)A.pts+=3; else {H.pts++;A.pts++;}
+        }
+      }
+      tied.forEach(t=>{const z=h[t.team]; t._hp=z.pts; t._hgd=z.gf-z.gc; t._hgf=z.gf;});
+      tied.sort((a,b)=> b._hp-a._hp || b._hgd-a._hgd || b._hgf-a._hgf || b.gd-a.gd || b.gf-a.gf || a.team.localeCompare(b.team));
+    }
+    out.push(...tied); i=j;
+  }
+  return out;
+}
+function computeGroups(){
+  const scores=results.scores||[];
+  const tables={}; const thirds=[];
+  for(const g of D.groups){
+    const st={}; g.teams.forEach(t=>st[t]={team:t,pj:0,w:0,d:0,l:0,gf:0,gc:0,pts:0});
+    for(const mi of g.matches){
+      const sc=scores[mi]; if(!sc) continue;
+      const m=D.schedule[mi]; const [x,y]=sc, H=st[m.home], A=st[m.away];
+      H.pj++;A.pj++;H.gf+=x;H.gc+=y;A.gf+=y;A.gc+=x;
+      if(x>y){H.w++;H.pts+=3;A.l++;} else if(x<y){A.w++;A.pts+=3;H.l++;} else {H.d++;A.d++;H.pts++;A.pts++;}
+    }
+    Object.values(st).forEach(t=>t.gd=t.gf-t.gc);
+    const sorted=sortGroup(Object.values(st), g);
+    tables[g.label]=sorted;
+    thirds.push({...sorted[2], group:g.label});
+  }
+  thirds.sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf || a.team.localeCompare(b.team));
+  return {tables, thirds, played: scores.filter(Boolean).length};
+}
+let grpTab="terceros";
+function renderGroups(){
+  const app=document.getElementById("app");
+  const {tables, thirds, played}=computeGroups();
+  const qualThird=new Set(thirds.slice(0,8).map(t=>t.team+"|"+t.group));
+  const teamRow=c=>`<span class="fl">${flagOf(c)}</span> ${c} <span class="muted">${nameOf(c)}</span>`;
+
+  // best-third ranking table
+  const thirdRows=thirds.map((t,i)=>{
+    const inTop=i<8;
+    return `<tr style="${inTop?'background:rgba(255,211,78,.08)':'opacity:.6'}">
+      <td class="rank">${i+1}</td><td>${teamRow(t.team)} <span class="muted">(Gr. ${t.group})</span></td>
+      <td style="text-align:right">${t.pts}</td><td style="text-align:right">${t.gd>0?'+':''}${t.gd}</td>
+      <td style="text-align:right">${t.gf}</td>
+      <td>${inTop?'<span class="ok">✓ clasifica</span>':'<span class="muted">fuera</span>'}</td></tr>`;
+  }).join("");
+  const thirdsCard=`<div id="grp-terceros" class="card grp" style="margin-top:0">
+    <h3 style="margin-top:0">🥉 Mejores terceros <span class="muted" style="font-weight:400;font-size:12px">· los 8 mejores avanzan a la R32</span></h3>
+    <table><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">Pts</th><th style="text-align:right">DG</th><th style="text-align:right">GF</th><th>Estado</th></tr></thead>
+      <tbody>${thirdRows}</tbody></table></div>`;
+
+  const groupCard=g=>{
+    const rows=tables[g.label].map((t,i)=>{
+      let tint='', estado='';
+      if(i<2){ tint='background:rgba(58,210,159,.10)'; estado='<span class="ok">✓ 1.º/2.º</span>'; }
+      else if(i===2){ const q=qualThird.has(t.team+"|"+g.label);
+        tint=q?'background:rgba(255,211,78,.10)':'opacity:.6';
+        estado=q?'<span style="color:var(--gold)">3.º · clasifica</span>':'<span class="muted">3.º · fuera</span>'; }
+      else { tint='opacity:.5'; estado='<span class="muted">fuera</span>'; }
+      return `<tr style="${tint}">
+        <td class="rank">${i+1}</td><td>${teamRow(t.team)}</td>
+        <td style="text-align:right" class="muted">${t.pj}</td>
+        <td style="text-align:right">${t.w}</td><td style="text-align:right">${t.d}</td><td style="text-align:right">${t.l}</td>
+        <td style="text-align:right" class="muted">${t.gf}:${t.gc}</td>
+        <td style="text-align:right">${t.gd>0?'+':''}${t.gd}</td>
+        <td style="text-align:right"><b>${t.pts}</b></td><td>${estado}</td></tr>`;
+    }).join("");
+    return `<div id="grp-${g.label}" class="card grp">
+      <h3 style="margin-top:0">Grupo ${g.label}</h3>
+      <table><thead><tr><th>#</th><th>Equipo</th><th style="text-align:right">PJ</th><th style="text-align:right">G</th><th style="text-align:right">E</th><th style="text-align:right">P</th><th style="text-align:right">GF:GC</th><th style="text-align:right">DG</th><th style="text-align:right">Pts</th><th>Estado</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+  };
+
+  const chips=[{id:"terceros",label:"🥉 Terceros"}, ...D.groups.map(g=>({id:"grp"+g.label,label:"Grupo "+g.label}))]
+    .map(c=>`<button class="jchip ${c.id===grpTab?'act':''}" data-g="${c.id}">${c.label}</button>`).join("");
+
+  app.innerHTML=`
+    <div class="toprow"><span class="badge live">Clasificación de grupos</span>
+      <span class="muted">${played}/72 partidos jugados · proyección en vivo: 1.º y 2.º + 8 mejores terceros pasan a la R32</span></div>
+    <div class="jumpbar">${chips}</div>
+    ${thirdsCard}
+    ${D.groups.map(groupCard).join("")}
+    <div class="card muted" style="font-size:12px">
+      Tabla provisional según los partidos ya jugados. Desempates aplicados: puntos → entre empatados (pts/dif./goles) → diferencia y goles totales.
+      No se modelan tarjetas ni ranking FIFA (criterios finales de la FIFA). Los cruces exactos de la R32 entre terceros se definen al terminar la fase de grupos (Anexo C).
+    </div>`;
+  document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{
+    grpTab=b.dataset.g;
+    document.querySelectorAll(".jumpbar .jchip").forEach(x=>x.classList.toggle("act",x.dataset.g===grpTab));
+    const id=grpTab==="terceros"?"grp-terceros":"grp-"+grpTab.slice(3);
+    document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+
 function render(){
   window.onscroll=null;   // clear any prior scroll-spy
   tab==="leaderboard"?renderLeaderboard():
   tab==="results"?renderResults():
+  tab==="groups"?renderGroups():
   tab==="tracked"?renderTracked():
   tab==="analysis"?renderAnalysis():
   tab==="compare"?renderCompare():
