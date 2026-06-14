@@ -848,20 +848,20 @@ function renderStats(){
     {id:"third", label:"🥉 3.º puesto", html:card("🥉 3.º puesto más elegido", barList(tally(ps.map(p=>p.third)), teamFmt, 48))},
     {id:"qf", label:"Cuartos", html:card("Equipos más elegidos para Cuartos", barList(tally(ps.flatMap(p=>p.qf)), teamFmt, 48), "todos los elegidos")},
     {id:"r32", label:"R32", html:card("Equipos más elegidos para clasificar (R32)", barList(tally(ps.flatMap(p=>p.r32)), teamFmt, 48), "los 48 equipos")},
-    {id:"divided", label:"⚖️ Divididos", html:card("Partidos más divididos — top 10",
+    {id:"divided", label:"⚖️ Divididos", html:card("Partidos más divididos — top 20",
       `<div class="muted" style="font-size:11px;margin-bottom:10px">
          <span class="spdot home"></span> local · <span class="spdot draw"></span> empate · <span class="spdot away"></span> visitante · <span style="margin-left:6px">% local/empate/visitante</span></div>
-       ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,10).map(splitRow).join("")}`,
+       ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,20).map(splitRow).join("")}`,
       "donde más se reparten las predicciones")},
-    {id:"divr32", label:"⚖️ R32 divididos", html:card("Clasificados a R32 más divididos — top 12",
+    {id:"divr32", label:"⚖️ R32 divididos", html:card("Clasificados a R32 más divididos — top 20",
       `<div class="muted" style="font-size:11px;margin-bottom:10px">
          <span class="spdot home"></span> sí clasifica · <span class="spdot away"></span> no · <span style="margin-left:6px">% sí/no</span></div>
-       ${koDividedRows("r32",12)}`,
+       ${koDividedRows("r32",20)}`,
       "equipos donde más se reparten los pronósticos de clasificación")},
-    {id:"divr16", label:"⚖️ Octavos divididos", html:card("Clasificados a Octavos más divididos — top 12",
+    {id:"divr16", label:"⚖️ Octavos divididos", html:card("Clasificados a Octavos más divididos — top 20",
       `<div class="muted" style="font-size:11px;margin-bottom:10px">
          <span class="spdot home"></span> sí clasifica · <span class="spdot away"></span> no · <span style="margin-left:6px">% sí/no</span></div>
-       ${koDividedRows("r16",12)}`,
+       ${koDividedRows("r16",20)}`,
       "equipos donde más se reparten los pronósticos de clasificación")},
   ];
   // group chips don't switch sections — they jump to a group within one long
@@ -1126,6 +1126,8 @@ function computeGroups(){
     }
     Object.values(st).forEach(t=>t.gd=t.gf-t.gc);
     const sorted=sortGroup(Object.values(st), g);
+    // flag teams level on points/GD/GF — separated only by head-to-head / FIFA ranking
+    sorted.forEach((t,k)=>{ t._tie = sorted.some((o,j)=>j!==k && o.pts===t.pts && o.gd===t.gd && o.gf===t.gf); });
     tables[g.label]=sorted;
     thirds.push({...sorted[2], group:g.label});
   }
@@ -1173,8 +1175,10 @@ function renderGroups(){
         tint=q?'background:rgba(255,211,78,.10)':'opacity:.6';
         estado=q?'<span style="color:var(--gold)">3.º · clasifica</span>':'<span class="muted">3.º · fuera</span>'; }
       else { tint='opacity:.5'; estado='<span class="muted">fuera</span>'; }
+      if(t._tie) estado+=' <span class="tie-note" title="Igualado en puntos, DG y GF — el orden lo decide el ranking FIFA">· empate (ranking)</span>';
+      const tieMark=t._tie?'<span class="tie-eq" title="Igualado en puntos, DG y GF — desempata el ranking FIFA">⁼</span>':'';
       return `<tr style="${tint}">
-        <td class="rank">${i+1}</td><td>${teamRow(t.team)}</td>
+        <td class="rank">${i+1}${tieMark}</td><td>${teamRow(t.team)}</td>
         <td style="text-align:right" class="muted">${t.pj}</td>
         <td style="text-align:right">${t.w}</td><td style="text-align:right">${t.d}</td><td style="text-align:right">${t.l}</td>
         <td style="text-align:right" class="muted">${t.gf}:${t.gc}</td>
