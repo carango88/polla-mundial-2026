@@ -109,9 +109,19 @@ function anyResults(){
          results.qf.length||results.sf.length||results.champion||results.scorer;
 }
 
+// Competition ranking with ties: people on the same total share a position (1,1,1,4,5…).
+// label(total) → "T1" when tied, plain "4" when not. Position is by total points only.
+function rankInfo(ranked){
+  const cnt={}; ranked.forEach(r=>{cnt[r.s.total]=(cnt[r.s.total]||0)+1;});
+  const distinct=[...new Set(ranked.map(r=>r.s.total))].sort((a,b)=>b-a);
+  const rk={}; let acc=0; distinct.forEach(t=>{rk[t]=acc+1; acc+=cnt[t];});
+  return {rank:t=>rk[t], tied:t=>cnt[t]>1, label:t=>(cnt[t]>1?"T":"")+rk[t]};
+}
+
 // ---- LEADERBOARD --------------------------------------------------------
 function renderLeaderboard(){
   const ranked = scoreAll();
+  const ri = rankInfo(ranked);
   const cols=[["group","Grupos","Fase de grupos"],["r32","R32","Ronda de 32"],["r16","R16","Octavos"],
               ["qf","4tos","Cuartos"],["sf","Semis","Semifinalistas"],
               ["fourth","4.º","Cuarto lugar"],["third","3.º","Tercer lugar"],["runnerUp","2.º","Subcampeón"],["champion","🏆","Campeón"],
@@ -145,10 +155,9 @@ function renderLeaderboard(){
       });
     }
     document.getElementById("lb").innerHTML = rows.map((r,i)=>{
-      const rank = ranked.indexOf(r)+1;
       const cell=k=>colVal(r.s,k);
       return `<tr>
-        <td class="rank">${rank}</td>
+        <td class="rank" title="${ri.tied(r.s.total)?'Empatado en la posición '+ri.rank(r.s.total):''}">${ri.label(r.s.total)}</td>
         <td><span class="name-link" data-n="${enc(r.p.name)}">${deco(r.p.name)}${r.p.name}</span></td>
         ${cols.map(c=>`<td style="text-align:right" class="muted">${cell(c[0])||""}</td>`).join("")}
         <td style="text-align:right"><span class="total">${r.s.total}</span></td>
@@ -334,7 +343,8 @@ function drawDetail(){
   const box=document.getElementById("pdetail");
   if(!detailName){box.innerHTML='<div class="card muted">Elige un participante para ver el desglose.</div>';return;}
   const p=D.participants.find(x=>x.name===detailName); const s=scoreParticipant(p);
-  const rank=scoreAll().findIndex(r=>r.p.name===detailName)+1;
+  const _ri=rankInfo(scoreAll());
+  const posStr=(_ri.tied(s.total)?"T":"#")+_ri.rank(s.total);
   const koRow=(key,label,res)=>`<div class="kv"><span>${label} <span class="muted">${p[key].length} picks</span></span>
      <span><b class="${res.pts?'ok':'muted'}">${res.hits.length} aciertos</b> · ${res.pts} pts</span></div>`;
   const placeRow=(k,label)=>{const ok=s.placeHits[k];const pick=p[k]?nameOf(p[k]):'—';
@@ -342,7 +352,7 @@ function drawDetail(){
   box.innerHTML=`
    <div class="card row" style="justify-content:space-between">
      <div><div style="font-size:18px;font-weight:800">${p.name}</div>
-       <div class="muted">Posición #${rank} de ${D.participants.length}</div></div>
+       <div class="muted">Posición ${posStr} de ${D.participants.length}${_ri.tied(s.total)?' (empate)':''}</div></div>
      <div style="text-align:right"><div class="total" style="font-size:28px">${s.total}</div><div class="muted">de 311 pts</div></div>
    </div>
    <div class="card">
