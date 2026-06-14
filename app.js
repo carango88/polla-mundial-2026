@@ -11,6 +11,16 @@ const FLAGS = {
   PAR:"🇵🇾",PAN:"🇵🇦",BIH:"🇧🇦",UZB:"🇺🇿",IRQ:"🇮🇶",JOR:"🇯🇴",CUW:"🇨🇼",HAI:"🇭🇹",NGA:"🇳🇬"
 };
 const flagOf = c => FLAGS[c] || "🏳️";
+// FIFA world ranking (approx., lower = better) — used as the final group tiebreaker
+// after points, GD, goals-for and head-to-head (cards/fair-play aren't in the data).
+const FIFA_RANK = {
+  ARG:1, ESP:2, FRA:3, ENG:4, BRA:5, POR:6, NED:7, BEL:8, GER:9, CRO:10,
+  URU:11, MAR:12, COL:13, MEX:14, USA:15, IRN:16, SUI:17, JPN:18, SEN:19, KOR:20,
+  AUT:21, AUS:22, ECU:23, NOR:24, TUR:25, EGY:26, CIV:27, SWE:28, PAN:29, CAN:30,
+  QAT:31, ALG:32, SCO:33, TUN:34, PAR:35, CZE:36, NGA:37, KSA:38, UZB:39, IRQ:40,
+  COD:41, JOR:42, RSA:43, CPV:44, GHA:45, BIH:46, HAI:47, CUW:48, NZL:49
+};
+const fifaRank = c => FIFA_RANK[c] || 999;
 
 // ---- results (answer key) state ----------------------------------------
 function blankResults(){
@@ -1043,7 +1053,8 @@ function renderCompare(){
 
 // ---- GRUPOS: live standings + qualification projection (FIFA Art. 12-13) ---
 // Sort a group applying: points → head-to-head (pts/GD/GF among tied) → overall
-// GD → overall GF → name. (Cards & FIFA-ranking tiebreakers are not modelled.)
+// GD → overall GF → FIFA ranking. (Fair-play/cards aren't in the data, so ranking
+// is the final modelled tiebreaker.)
 function sortGroup(stats, g){
   const arr=[...stats].sort((a,b)=>b.pts-a.pts);
   const out=[]; let i=0;
@@ -1063,7 +1074,7 @@ function sortGroup(stats, g){
         }
       }
       tied.forEach(t=>{const z=h[t.team]; t._hp=z.pts; t._hgd=z.gf-z.gc; t._hgf=z.gf;});
-      tied.sort((a,b)=> b._hp-a._hp || b._hgd-a._hgd || b._hgf-a._hgf || b.gd-a.gd || b.gf-a.gf || a.team.localeCompare(b.team));
+      tied.sort((a,b)=> b._hp-a._hp || b._hgd-a._hgd || b._hgf-a._hgf || b.gd-a.gd || b.gf-a.gf || fifaRank(a.team)-fifaRank(b.team));
     }
     out.push(...tied); i=j;
   }
@@ -1085,7 +1096,7 @@ function computeGroups(){
     tables[g.label]=sorted;
     thirds.push({...sorted[2], group:g.label});
   }
-  thirds.sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf || a.team.localeCompare(b.team));
+  thirds.sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf || fifaRank(a.team)-fifaRank(b.team));
   return {tables, thirds, played: scores.filter(Boolean).length};
 }
 let grpTab="terceros";
@@ -1154,7 +1165,7 @@ function renderGroups(){
     ${D.groups.map(groupCard).join("")}
     <div class="card muted" style="font-size:12px">
       Tabla provisional según los partidos ya jugados. Desempates aplicados: puntos → entre empatados (pts/dif./goles) → diferencia y goles totales.
-      No se modelan tarjetas ni ranking FIFA (criterios finales de la FIFA). Los cruces exactos de la R32 entre terceros se definen al terminar la fase de grupos (Anexo C).
+      Desempate: puntos → diferencia de gol → goles a favor → enfrentamiento directo → <b>ranking FIFA</b> (no se modela el juego limpio/tarjetas). Los cruces exactos de la R32 entre terceros se definen al terminar la fase de grupos (Anexo C).
     </div>`;
   document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{
     grpTab=b.dataset.g;
