@@ -21,6 +21,8 @@ const FIFA_RANK = {
   COD:41, JOR:42, RSA:43, CPV:44, GHA:45, BIH:46, HAI:47, CUW:48, NZL:49
 };
 const fifaRank = c => FIFA_RANK[c] || 999;
+// Group-stage match dates (US Eastern), aligned to window.DATA.schedule order.
+const MATCH_DATES=["Jun 11","Jun 11","Jun 12","Jun 12","Jun 13","Jun 13","Jun 13","Jun 14","Jun 14","Jun 14","Jun 14","Jun 14","Jun 15","Jun 15","Jun 15","Jun 15","Jun 16","Jun 16","Jun 16","Jun 17","Jun 17","Jun 17","Jun 17","Jun 17","Jun 18","Jun 18","Jun 18","Jun 18","Jun 19","Jun 19","Jun 19","Jun 19","Jun 20","Jun 20","Jun 20","Jun 21","Jun 21","Jun 21","Jun 21","Jun 21","Jun 22","Jun 22","Jun 22","Jun 22","Jun 23","Jun 23","Jun 23","Jun 23","Jun 24","Jun 24","Jun 24","Jun 24","Jun 24","Jun 24","Jun 25","Jun 25","Jun 25","Jun 25","Jun 25","Jun 25","Jun 26","Jun 26","Jun 26","Jun 26","Jun 26","Jun 26","Jun 27","Jun 27","Jun 27","Jun 27","Jun 27","Jun 27"];
 
 // ---- results (answer key) state ----------------------------------------
 function blankResults(){
@@ -759,7 +761,7 @@ function splitScore(i){
 function splitRow(s){
   const m=D.schedule[s.i], [h,d,a]=s.c, tot=s.tot, pct=n=>n/tot*100, R=n=>Math.round(pct(n));
   return `<div class="splitrow">
-    <span class="splbl"><span class="fl">${flagOf(m.home)}</span> ${m.home} <span class="muted">vs</span> ${m.away} <span class="fl">${flagOf(m.away)}</span></span>
+    <span class="splbl"><span class="spdate">${MATCH_DATES[s.i]||""}</span><span class="fl">${flagOf(m.home)}</span> ${m.home} <span class="muted">vs</span> ${m.away} <span class="fl">${flagOf(m.away)}</span></span>
     <span class="splbar">
       <span class="sp home" style="width:${pct(h)}%" title="${m.home} ${R(h)}%"></span>
       <span class="sp draw" style="width:${pct(d)}%" title="Empate ${R(d)}%"></span>
@@ -767,6 +769,27 @@ function splitRow(s){
     </span>
     <span class="spval muted">${R(h)}/${R(d)}/${R(a)}</span>
   </div>`;
+}
+// Most-divided knockout-advancement picks: for each team, how close to 50/50 the
+// "will reach this round?" pick is (binary entropy). Returns a rendered top-N list.
+function koDividedRows(key, topN){
+  const tot=D.participants.length||1;
+  const cnt={}; D.participants.forEach(p=>(p[key]||[]).forEach(t=>{cnt[t]=(cnt[t]||0)+1;}));
+  const rows=Object.keys(cnt).map(t=>{
+    const pr=cnt[t]/tot; const H=(pr<=0||pr>=1)?0:(-pr*Math.log2(pr)-(1-pr)*Math.log2(1-pr));
+    return {t,c:cnt[t],H};
+  }).sort((a,b)=>b.H-a.H).slice(0,topN);
+  return rows.map(r=>{
+    const pct=r.c/tot*100, R=Math.round(pct);
+    return `<div class="splitrow">
+      <span class="splbl"><span class="fl">${flagOf(r.t)}</span> ${r.t} <span class="muted">${nameOf(r.t)}</span></span>
+      <span class="splbar">
+        <span class="sp home" style="width:${pct}%" title="Sí clasifica ${R}%"></span>
+        <span class="sp away" style="width:${100-pct}%" title="No ${100-R}%"></span>
+      </span>
+      <span class="spval muted">${R}% sí · ${100-R}% no</span>
+    </div>`;
+  }).join("");
 }
 function matchPoll(i){
   const m=D.schedule[i], r=results.group[i];
@@ -830,6 +853,16 @@ function renderStats(){
          <span class="spdot home"></span> local · <span class="spdot draw"></span> empate · <span class="spdot away"></span> visitante · <span style="margin-left:6px">% local/empate/visitante</span></div>
        ${[...Array(D.schedule.length).keys()].map(splitScore).sort((a,b)=>b.H-a.H).slice(0,10).map(splitRow).join("")}`,
       "donde más se reparten las predicciones")},
+    {id:"divr32", label:"⚖️ R32 divididos", html:card("Clasificados a R32 más divididos — top 12",
+      `<div class="muted" style="font-size:11px;margin-bottom:10px">
+         <span class="spdot home"></span> sí clasifica · <span class="spdot away"></span> no · <span style="margin-left:6px">% sí/no</span></div>
+       ${koDividedRows("r32",12)}`,
+      "equipos donde más se reparten los pronósticos de clasificación")},
+    {id:"divr16", label:"⚖️ Octavos divididos", html:card("Clasificados a Octavos más divididos — top 12",
+      `<div class="muted" style="font-size:11px;margin-bottom:10px">
+         <span class="spdot home"></span> sí clasifica · <span class="spdot away"></span> no · <span style="margin-left:6px">% sí/no</span></div>
+       ${koDividedRows("r16",12)}`,
+      "equipos donde más se reparten los pronósticos de clasificación")},
   ];
   // group chips don't switch sections — they jump to a group within one long
   // stacked view of all groups (per-match prediction breakdowns)
