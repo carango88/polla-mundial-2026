@@ -40,9 +40,9 @@ async function getJSON(url) {
 }
 
 function* dateRange(startISO) {
-  const start = new Date(startISO + "T12:00:00Z");
-  const today = new Date();
-  for (let d = new Date(start); d <= today; d.setUTCDate(d.getUTCDate() + 1)) {
+  const start = new Date(startISO + "T00:00:00Z");
+  const end = new Date(); end.setUTCDate(end.getUTCDate() + 1);   // through tomorrow (UTC) so today's/late games are never missed
+  for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
     const y = d.getUTCFullYear(), m = String(d.getUTCMonth() + 1).padStart(2, "0"), day = String(d.getUTCDate()).padStart(2, "0");
     yield `${y}${m}${day}`;
   }
