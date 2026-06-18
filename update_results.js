@@ -48,9 +48,11 @@ function* dateRange(startISO) {
   }
 }
 
-// schedule index for a home/away abbreviation pair (group stage only)
-function scheduleIndex(homeAb, awayAb) {
-  return schedule.findIndex(m => m.home === homeAb && m.away === awayAb);
+// schedule index for a match between two teams — order-independent, because ESPN may
+// list home/away opposite to our schedule for neutral-venue games (which would otherwise
+// silently drop the game).
+function scheduleIndex(a, b) {
+  return schedule.findIndex(m => (m.home === a && m.away === b) || (m.home === b && m.away === a));
 }
 
 async function main() {
@@ -74,9 +76,15 @@ async function main() {
       const hAb = home.team.abbreviation, aAb = away.team.abbreviation;
       const hs = Number(home.score), as = Number(away.score);
 
-      // group result
+      // group result — orient ESPN's score to OUR schedule's home/away (ESPN order may differ)
       const idx = scheduleIndex(hAb, aAb);
-      if (idx >= 0) { group[idx] = hs > as ? "1" : hs < as ? "2" : "E"; scores[idx] = [hs, as]; }
+      if (idx >= 0) {
+        const m = schedule[idx];
+        const sh = (m.home === hAb) ? hs : as;   // goals for the schedule's home team
+        const sa = (m.home === hAb) ? as : hs;
+        group[idx] = sh > sa ? "1" : sh < sa ? "2" : "E";
+        scores[idx] = [sh, sa];
+      }
       finished++;
 
       // scorers from the match summary
