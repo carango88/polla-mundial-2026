@@ -900,15 +900,20 @@ function renderGoals(){
   const pickCount={};
   for(const p of D.participants){ if(p.scorer){ const sn=norm(p.scorer.split(" ").pop()); pickCount[sn]=(pickCount[sn]||0)+1; } }
 
-  // official scorer table
+  // official scorer table — click a row to see which participants bet on that player
   const scorerRows = goals.length ? goals.map((g,i)=>{
     const leader = g.goals===lead;
-    const bets = pickCount[norm(g.player.split(" ").pop())]||0;
-    return `<div class="barrow">
-      <span class="lbl">${i+1}. <span class="fl">${flagOf(g.team)}</span> ${g.player} <span class="muted">${g.team}</span>
-        <span class="${bets?'ok':'muted'}" title="${bets} participantes lo eligieron como goleador">(${bets})</span></span>
-      <span class="track"><span class="fill" style="width:${(g.goals/maxG*100).toFixed(0)}%"></span></span>
-      <span class="val">${'⚽'.repeat(Math.min(g.goals,5))} <b>${g.goals}</b>${leader?' 👑':''}</span></div>`;
+    const sn = norm(g.player.split(" ").pop());
+    const who = D.participants.filter(p=>p.scorer && norm(p.scorer.split(" ").pop())===sn).map(p=>p.name);
+    const bets = who.length;
+    return `<details class="grow">
+      <summary class="barrow">
+        <span class="lbl">${i+1}. <span class="fl">${flagOf(g.team)}</span> ${g.player} <span class="muted">${g.team}</span>
+          <span class="${bets?'ok':'muted'}" title="participantes que lo eligieron como bota de oro">(${bets})</span></span>
+        <span class="track"><span class="fill" style="width:${(g.goals/maxG*100).toFixed(0)}%"></span></span>
+        <span class="val">${'⚽'.repeat(Math.min(g.goals,5))} <b>${g.goals}</b>${leader?' 👑':''}</span></summary>
+      <div class="grow-names">${bets?who.map(n=>`<span class="pk">${deco(n)}${n}</span>`).join(""):'<span class="muted" style="font-size:11px">Nadie lo eligió como bota de oro</span>'}</div>
+    </details>`;
   }).join("") : '<div class="muted">Aún no hay goles registrados.</div>';
 
   // golden-boot bets in the pool, matched against who has actually scored
@@ -919,10 +924,14 @@ function renderGoals(){
   const N=ps.length;
   const betRows=picks.map(([name,cnt])=>{
     const scored=goalsBySurname[norm(name)]||0;
-    return `<div class="barrow">
-      <span class="lbl">${name}${scored?` <span class="ok">⚽${scored}</span>`:''}</span>
-      <span class="track"><span class="fill" style="width:${(cnt/picks[0][1]*100).toFixed(0)}%"></span></span>
-      <span class="val">${cnt} · ${(cnt/N*100).toFixed(0)}%</span></div>`;
+    const who=ps.filter(p=>p.scorer===name).map(p=>p.name);
+    return `<details class="grow">
+      <summary class="barrow">
+        <span class="lbl">${name}${scored?` <span class="ok">⚽${scored}</span>`:''}</span>
+        <span class="track"><span class="fill" style="width:${(cnt/picks[0][1]*100).toFixed(0)}%"></span></span>
+        <span class="val">${cnt} · ${(cnt/N*100).toFixed(0)}%</span></summary>
+      <div class="grow-names">${who.map(n=>`<span class="pk">${deco(n)}${n}</span>`).join("")}</div>
+    </details>`;
   }).join("");
 
   const off = results.scorer
@@ -934,10 +943,10 @@ function renderGoals(){
       <span class="muted">${totalGoals} goles en el torneo · ${off}</span></div>
     <div class="duel-grid">
       <div class="card"><h3 style="margin-top:0">Tabla de goleadores (oficial)</h3>
-        <div class="muted" style="font-size:12px;margin-bottom:8px">(n) = participantes que lo eligieron como bota de oro.</div>
+        <div class="muted" style="font-size:12px;margin-bottom:8px">(n) = participantes que lo eligieron como bota de oro · <b>clic</b> para ver quiénes.</div>
         ${scorerRows}</div>
       <div class="card"><h3 style="margin-top:0">Bota de oro — apuestas de la polla</h3>
-        <div class="muted" style="font-size:12px;margin-bottom:8px">Apellidos elegidos por los participantes (⚽ = ya anotó).</div>
+        <div class="muted" style="font-size:12px;margin-bottom:8px">Apellidos elegidos por los participantes (⚽ = ya anotó) · <b>clic</b> para ver quiénes.</div>
         ${betRows}</div>
     </div>`;
 }

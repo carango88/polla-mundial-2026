@@ -45,6 +45,15 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5p
 tbody tr:hover{background:var(--panel2)}
 .rank{font-weight:800;color:var(--muted);width:38px}
 .tie-eq{color:var(--gold);font-weight:800;margin-left:2px;cursor:help}
+/* expandable goalscorer rows (click to see who picked them) */
+.grow{margin:1px 0}
+.grow>summary{list-style:none;cursor:pointer;border-radius:6px}
+.grow>summary::-webkit-details-marker{display:none}
+.grow>summary::marker{content:""}
+.grow>summary:hover{background:var(--panel2)}
+.grow[open]>summary .lbl{color:var(--accent)}
+.grow-names{display:flex;flex-wrap:wrap;gap:5px;padding:7px 8px 11px 16px}
+.grow>summary .lbl{white-space:normal;overflow:visible;text-overflow:clip}  /* show full name + (n) count, no cut-off */
 .total{font-weight:800;color:var(--accent);font-size:15px}
 .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;background:var(--panel2);border:1px solid var(--line)}
 .name-link{cursor:pointer;font-weight:600}
@@ -127,16 +136,16 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 .mpoll[open]>summary{border-bottom:1px solid var(--line)}
 .mpoll-body{padding:9px 13px}
 .pcard{display:grid;grid-template-columns:14px 1fr auto 1fr;align-items:center;gap:5px;padding:4px 7px;border:1px solid var(--line);border-radius:7px;background:var(--panel2);font-size:11.5px;font-weight:700}
-.pcard .pteam{display:flex;align-items:center;gap:4px;color:var(--muted)}
-.pcard .pteam.a{justify-content:flex-end;text-align:right}
+.pcard .pteam{display:inline-flex;align-items:center;gap:4px;color:var(--muted);padding:2px 6px;border-radius:6px;justify-self:start}
+.pcard .pteam.a{justify-content:flex-end;text-align:right;justify-self:end}
 .pcard .pteam .fl{font-size:13px}
 .pcard .pmid{font-size:11px}
-.pcard .pteam.psel{color:var(--text)}
+.pcard .pteam.psel{color:var(--text);font-weight:800;background:rgba(255,211,78,.20)}   /* the pick — gold pill */
 .pcard .pstat{font-size:11px;color:var(--muted);text-align:center}
 .pcard.ok{border-color:rgba(58,210,159,.5);background:rgba(58,210,159,.07)}
-.pcard.ok .pstat{color:var(--win)} .pcard.ok .pteam.psel{color:var(--accent)}
+.pcard.ok .pstat{color:var(--win)} .pcard.ok .pteam.psel{color:#062017;background:var(--accent)}   /* correct — solid green */
 .pcard.bad{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.07)}
-.pcard.bad .pstat{color:var(--bad)} .pcard.bad .pteam.psel{color:#ff9b9b}
+.pcard.bad .pstat{color:var(--bad)} .pcard.bad .pteam.psel{color:#fff;background:rgba(255,107,107,.6)}   /* wrong — red */
 .pcard.pend{opacity:.72}
 .splitrow{display:grid;grid-template-columns:minmax(150px,1fr) 2fr 64px;gap:10px;align-items:center;padding:5px 0}
 .splbl{font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
