@@ -1151,14 +1151,21 @@ function renderGroups(){
       const better=tables[g.label].filter(o=>o.pts>t.pts||(o.pts===t.pts&&o.gd>t.gd)||(o.pts===t.pts&&o.gd===t.gd&&o.gf>t.gf)).length;
       const grpSize=tables[g.label].filter(o=>o.pts===t.pts&&o.gd===t.gd&&o.gf===t.gf).length;
       const rankNum=better+1;
+      // positions are provisional until the group finishes — nobody is "fuera" while they can still
+      // mathematically advance. Definitive ✓/fuera only once all group matches are played.
+      const groupDone = playedIn[g.label] === g.matches.length;
       let tint, estado;
-      if(better+grpSize<=2){ tint='background:rgba(58,210,159,.10)'; estado='<span class="ok">✓ 1.º/2.º</span>'; }
+      if(better+grpSize<=2){ tint='background:rgba(58,210,159,.10)';
+        estado = groupDone ? '<span class="ok">✓ 1.º/2.º</span>' : '<span class="ok">1.º/2.º · parcial</span>'; }
       else if(better<2){ tint='background:rgba(255,211,78,.08)'; estado='<span style="color:var(--gold)">empate · por definir</span>'; }
       else if(t._tie){ tint='opacity:.6'; estado='<span class="muted">empate · por definir</span>'; }
-      else if(better===2){ const q=qualThird.has(t.team+"|"+g.label);
-        tint=q?'background:rgba(255,211,78,.10)':'opacity:.6';
-        estado=q?'<span style="color:var(--gold)">3.º · clasifica</span>':'<span class="muted">3.º · fuera</span>'; }
-      else { tint='opacity:.5'; estado='<span class="muted">fuera</span>'; }
+      else if(better===2){
+        if(groupDone){ const q=qualThird.has(t.team+"|"+g.label);
+          tint=q?'background:rgba(255,211,78,.10)':'opacity:.6';
+          estado=q?'<span style="color:var(--gold)">3.º · clasifica</span>':'<span class="muted">3.º · fuera</span>'; }
+        else { tint='opacity:.78'; estado='<span style="color:var(--gold)">3.º · parcial</span>'; } }
+      else { tint='opacity:.6';
+        estado = groupDone ? '<span class="muted">fuera</span>' : '<span class="muted">parcialmente fuera</span>'; }
       const tieMark=t._tie?'<span class="tie-eq" title="Igualado en puntos, DG y GF — posición por definir con los resultados oficiales">⁼</span>':'';
       return `<tr style="${tint}">
         <td class="rank">${rankNum}${tieMark}</td><td>${teamRow(t.team)}</td>
@@ -1185,7 +1192,7 @@ function renderGroups(){
     ${D.groups.map(groupCard).join("")}
     <div class="card muted" style="font-size:12px">
       Tabla provisional según los partidos ya jugados. Desempates aplicados: puntos → entre empatados (pts/dif./goles) → diferencia y goles totales.
-      Desempate: puntos → diferencia de gol → goles a favor. Los equipos que sigan igualados se muestran como <b>«empate · por definir»</b> (marcados con <span class="tie-eq">⁼</span>) y su posición se resuelve con los resultados oficiales. Los cruces exactos de la R32 entre terceros se definen al terminar la fase de grupos (Anexo C).
+      Desempate: puntos → diferencia de gol → goles a favor. Los equipos que sigan igualados se muestran como <b>«empate · por definir»</b> (marcados con <span class="tie-eq">⁼</span>) y su posición se resuelve con los resultados oficiales. Mientras el grupo no termine las posiciones son <b>provisionales</b> («parcial» / «parcialmente fuera»); «✓» y «fuera» solo son definitivos al jugarse los 3 partidos. Los cruces exactos de la R32 entre terceros se definen al terminar la fase de grupos (Anexo C).
     </div>`;
   document.querySelectorAll(".jumpbar .jchip").forEach(b=>b.onclick=()=>{
     grpTab=b.dataset.g;
