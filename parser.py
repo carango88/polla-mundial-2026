@@ -83,14 +83,30 @@ def main():
     comp={}
     for t in list(parent):
         comp.setdefault(find(t), []).append(t)
-    comps=sorted(comp.values(), key=lambda g: min(first_idx[t] for t in g))
-    letters="ABCDEFGHIJKL"
+    # Official FIFA group letters (the match graph gives the right team *sets*, but the
+    # letter must be the official one, not first-appearance order).
+    OFFICIAL_GROUP = {
+        "MEX":"A","RSA":"A","KOR":"A","CZE":"A",
+        "CAN":"B","BIH":"B","QAT":"B","SUI":"B",
+        "BRA":"C","MAR":"C","HAI":"C","SCO":"C",
+        "USA":"D","PAR":"D","AUS":"D","TUR":"D",
+        "GER":"E","CUW":"E","CIV":"E","ECU":"E",
+        "NED":"F","JPN":"F","SWE":"F","TUN":"F",
+        "BEL":"G","EGY":"G","IRN":"G","NZL":"G",
+        "ESP":"H","CPV":"H","KSA":"H","URU":"H",
+        "FRA":"I","SEN":"I","IRQ":"I","NOR":"I",
+        "ARG":"J","ALG":"J","AUT":"J","JOR":"J",
+        "POR":"K","COD":"K","UZB":"K","COL":"K",
+        "ENG":"L","CRO":"L","GHA":"L","PAN":"L",
+    }
     groups=[]
-    for gi,g in enumerate(comps):
-        teams_g=sorted(g, key=lambda t: first_idx[t])
+    for g in comp.values():
         gset=set(g)
+        label=OFFICIAL_GROUP.get(next(iter(g)), "?")
+        teams_g=sorted(g, key=lambda t: first_idx[t])
         matches=[i for i,m in enumerate(schedule) if m["home"] in gset and m["away"] in gset]
-        groups.append({"label":letters[gi], "teams":teams_g, "matches":matches})
+        groups.append({"label":label, "teams":teams_g, "matches":matches})
+    groups.sort(key=lambda g: g["label"])
 
     data = {
         "schedule": schedule,

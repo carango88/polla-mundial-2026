@@ -328,23 +328,6 @@ window.DATA = {
   {
    "label": "C",
    "teams": [
-    "PAR",
-    "USA",
-    "TUR",
-    "AUS"
-   ],
-   "matches": [
-    3,
-    7,
-    28,
-    31,
-    58,
-    59
-   ]
-  },
-  {
-   "label": "D",
-   "teams": [
     "MAR",
     "BRA",
     "SCO",
@@ -357,6 +340,23 @@ window.DATA = {
     30,
     50,
     51
+   ]
+  },
+  {
+   "label": "D",
+   "teams": [
+    "PAR",
+    "USA",
+    "TUR",
+    "AUS"
+   ],
+   "matches": [
+    3,
+    7,
+    28,
+    31,
+    58,
+    59
    ]
   },
   {
@@ -396,23 +396,6 @@ window.DATA = {
   {
    "label": "G",
    "teams": [
-    "CPV",
-    "ESP",
-    "URU",
-    "KSA"
-   ],
-   "matches": [
-    12,
-    14,
-    36,
-    38,
-    62,
-    63
-   ]
-  },
-  {
-   "label": "H",
-   "teams": [
     "EGY",
     "BEL",
     "NZL",
@@ -425,6 +408,23 @@ window.DATA = {
     39,
     64,
     65
+   ]
+  },
+  {
+   "label": "H",
+   "teams": [
+    "CPV",
+    "ESP",
+    "URU",
+    "KSA"
+   ],
+   "matches": [
+    12,
+    14,
+    36,
+    38,
+    62,
+    63
    ]
   },
   {
