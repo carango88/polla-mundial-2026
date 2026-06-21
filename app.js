@@ -786,17 +786,24 @@ function matchPoll(i){
   let c1=0,cE=0,c2=0;
   for(const p of D.participants){ const v=p.group[i]; if(v==="1")c1++; else if(v==="E")cE++; else if(v==="2")c2++; }
   const tot=c1+cE+c2||1;
-  const row=(label,n,cls,win)=>`<div class="barrow">
-    <span class="lbl">${label}${win?' <span class="ok">✓</span>':''}</span>
-    <span class="track"><span class="fill ${cls}" style="width:${(n/tot*100).toFixed(0)}%"></span></span>
-    <span class="val">${n} · ${(n/tot*100).toFixed(0)}%</span></div>`;
+  // each outcome is clickable → expands the participants who picked it
+  const row=(label,n,cls,win,code)=>{
+    const who=D.participants.filter(p=>p.group[i]===code).map(p=>p.name);
+    return `<details class="grow">
+      <summary class="barrow">
+        <span class="lbl">${label}${win?' <span class="ok">✓</span>':''}</span>
+        <span class="track"><span class="fill ${cls}" style="width:${(n/tot*100).toFixed(0)}%"></span></span>
+        <span class="val">${n} · ${(n/tot*100).toFixed(0)}%</span></summary>
+      <div class="grow-names">${who.length?who.map(nm=>`<span class="pk">${deco(nm)}${nm}</span>`).join(""):'<span class="muted" style="font-size:11px">Nadie</span>'}</div>
+    </details>`;
+  };
   const played = r?`<span class="muted" style="font-weight:600;font-size:11px">· jugado</span>`:"";
   return `<details class="mpoll">
     <summary><span class="fl">${flagOf(m.home)}</span> ${m.home} <span class="muted">vs</span> ${m.away} <span class="fl">${flagOf(m.away)}</span> ${played}</summary>
     <div class="mpoll-body">
-      ${row(`<span class="fl">${flagOf(m.home)}</span> ${m.home} gana`, c1, "home", r==="1")}
-      ${row("🤝 Empate", cE, "draw", r==="E")}
-      ${row(`<span class="fl">${flagOf(m.away)}</span> ${m.away} gana`, c2, "away", r==="2")}
+      ${row(`<span class="fl">${flagOf(m.home)}</span> ${m.home} gana`, c1, "home", r==="1", "1")}
+      ${row("🤝 Empate", cE, "draw", r==="E", "E")}
+      ${row(`<span class="fl">${flagOf(m.away)}</span> ${m.away} gana`, c2, "away", r==="2", "2")}
     </div></details>`;
 }
 let statTab="resumen";
