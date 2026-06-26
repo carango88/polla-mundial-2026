@@ -55,10 +55,71 @@ function scheduleIndex(a, b) {
   return schedule.findIndex(m => (m.home === a && m.away === b) || (m.home === b && m.away === a));
 }
 
+// Detect the knockout round of an ESPN event from its labels.
+function roundOf(ev, comp) {
+  const parts = [ev.season && ev.season.slug, ev.name, ev.shortName, comp && comp.type && comp.type.text];
+  if (comp && Array.isArray(comp.notes)) parts.push(comp.notes.map(n => n.headline).join(" "));
+  const txt = parts.filter(Boolean).join(" ").toLowerCase();
+  if (/round of 32|r32|1\/16|round32/.test(txt)) return "r32";
+  if (/round of 16|r16|1\/8|eighth|octavos/.test(txt)) return "r16";
+  if (/quarter|1\/4|cuartos/.test(txt)) return "qf";
+  if (/semi/.test(txt)) return "sf";
+  if (/3rd place|third place|play-?off for third|bronze/.test(txt)) return "bronze";
+  if (/\bfinal\b/.test(txt)) return "final";
+  return null;
+}
+// Group ranking per FIFA Art.13: points → head-to-head (pts/GD/GF among tied) → overall GD → GF → name.
+function sortGroupStats(stats, g, scores) {
+  const arr = [...stats].sort((a, b) => b.pts - a.pts);
+  const out = []; let i = 0;
+  while (i < arr.length) {
+    let j = i; while (j < arr.length && arr[j].pts === arr[i].pts) j++;
+    const tied = arr.slice(i, j);
+    if (tied.length > 1) {
+      const ids = new Set(tied.map(t => t.team)); const h = {}; tied.forEach(t => h[t.team] = { pts: 0, gf: 0, gc: 0 });
+      for (const mi of g.matches) {
+        const sc = scores[mi]; if (!sc) continue; const m = schedule[mi];
+        if (ids.has(m.home) && ids.has(m.away)) {
+          const [x, y] = sc, H = h[m.home], A = h[m.away]; H.gf += x; H.gc += y; A.gf += y; A.gc += x;
+          if (x > y) H.pts += 3; else if (x < y) A.pts += 3; else { H.pts++; A.pts++; }
+        }
+      }
+      tied.forEach(t => { const z = h[t.team]; t._hp = z.pts; t._hgd = z.gf - z.gc; t._hgf = z.gf; });
+      tied.sort((a, b) => b._hp - a._hp || b._hgd - a._hgd || b._hgf - a._hgf || b.gd - a.gd || b.gf - a.gf || a.team.localeCompare(b.team));
+    }
+    out.push(...tied); i = j;
+  }
+  return out;
+}
+// R32 qualifiers from standings: top-2 of every COMPLETE group, plus the 8 best
+// thirds once ALL 12 groups are complete. Used until ESPN publishes the draw.
+function deriveR32(scores) {
+  const r32 = [], thirds = []; let allComplete = true;
+  for (const g of DATA.groups) {
+    const complete = g.matches.every(i => scores[i]);
+    const st = {}; g.teams.forEach(t => st[t] = { team: t, pts: 0, gf: 0, gc: 0, gd: 0 });
+    for (const mi of g.matches) {
+      const sc = scores[mi]; if (!sc) continue; const m = schedule[mi]; const [x, y] = sc, H = st[m.home], A = st[m.away];
+      H.gf += x; H.gc += y; A.gf += y; A.gc += x; if (x > y) H.pts += 3; else if (x < y) A.pts += 3; else { H.pts++; A.pts++; }
+    }
+    Object.values(st).forEach(t => t.gd = t.gf - t.gc);
+    const sorted = sortGroupStats(Object.values(st), g, scores);
+    if (complete) { r32.push(sorted[0].team, sorted[1].team); thirds.push(sorted[2]); }
+    else allComplete = false;
+  }
+  if (allComplete) {
+    thirds.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.team.localeCompare(b.team));
+    r32.push(...thirds.slice(0, 8).map(t => t.team));
+  }
+  return r32;
+}
+
 async function main() {
   const group = Array(schedule.length).fill(null);
   const scores = Array(schedule.length).fill(null);   // [home, away] goals per group match
   const goalMap = new Map();   // key `player|TEAM` -> {player, team, goals}
+  const ko = { r32: new Set(), r16: new Set(), qf: new Set(), sf: new Set() };  // teams reaching each knockout round
+  let finalMatch = null, bronzeMatch = null;
   let scannedDays = 0, finished = 0;
 
   for (const date of dateRange(START)) {
@@ -68,16 +129,29 @@ async function main() {
     for (const ev of sb.events) {
       const comp = ev.competitions && ev.competitions[0];
       if (!comp) continue;
-      const done = ev.status && ev.status.type && ev.status.type.completed;
-      if (!done) continue;
       const home = comp.competitors.find(c => c.homeAway === "home");
       const away = comp.competitors.find(c => c.homeAway === "away");
       if (!home || !away) continue;
       const hAb = home.team.abbreviation, aAb = away.team.abbreviation;
+      const done = ev.status && ev.status.type && ev.status.type.completed;
+      const idx = scheduleIndex(hAb, aAb);
+
+      // knockout participation — captured even before kickoff (reaching a round is what scores)
+      if (idx < 0) {
+        const rd = roundOf(ev, comp);
+        if (rd === "final" || rd === "bronze") {
+          if (done) {
+            const w = comp.competitors.find(c => c.winner), l = comp.competitors.find(c => !c.winner);
+            const rec = { win: w && w.team.abbreviation, lose: l && l.team.abbreviation };
+            if (rd === "final") finalMatch = rec; else bronzeMatch = rec;
+          }
+        } else if (rd) { ko[rd].add(hAb); ko[rd].add(aAb); }
+      }
+
+      if (!done) continue;
       const hs = Number(home.score), as = Number(away.score);
 
       // group result — orient ESPN's score to OUR schedule's home/away (ESPN order may differ)
-      const idx = scheduleIndex(hAb, aAb);
       if (idx >= 0) {
         const m = schedule[idx];
         const sh = (m.home === hAb) ? hs : as;   // goals for the schedule's home team
@@ -111,15 +185,32 @@ async function main() {
 
   const goals = [...goalMap.values()].sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player));
 
-  // preserve manually-maintained knockout / placement / eliminated data
-  const keep = k => PREV[k] !== undefined ? PREV[k] : (Array.isArray(PREV[k]) ? [] : "");
+  // ----- knockout fields -----
+  // R32: prefer ESPN's actual draw; otherwise derive from group standings.
+  let r32 = [...ko.r32];
+  if (r32.length === 0) r32 = deriveR32(scores);
+  const r16 = [...ko.r16], qf = [...ko.qf], sf = [...ko.sf];
+  let champion = PREV.champion || "", runnerUp = PREV.runnerUp || "", third = PREV.third || "", fourth = PREV.fourth || "";
+  if (finalMatch) { champion = finalMatch.win || champion; runnerUp = finalMatch.lose || runnerUp; }
+  if (bronzeMatch) { third = bronzeMatch.win || third; fourth = bronzeMatch.lose || fourth; }
+
+  // eliminated: teams that fell at a boundary we know in full (drives the "ganables" math)
+  const elim = new Set();
+  const cut = (a, b, expect) => { if (b.length === expect) { const bs = new Set(b); for (const t of a) if (!bs.has(t)) elim.add(t); } };
+  if (r32.length === 32) for (const g of DATA.groups) for (const t of g.teams) if (!r32.includes(t)) elim.add(t);
+  cut(r32, r16, 16); cut(r16, qf, 8); cut(qf, sf, 4);
+
+  const pick = (val, prev) => (val && val.length) ? val : prev;
   const out = {
     group,
     scores,
-    r32: PREV.r32 || [], r16: PREV.r16 || [], qf: PREV.qf || [], sf: PREV.sf || [],
-    fourth: PREV.fourth || "", third: PREV.third || "", runnerUp: PREV.runnerUp || "",
-    champion: PREV.champion || "", scorer: PREV.scorer || "",
-    eliminated: PREV.eliminated || [],
+    r32: pick(r32, PREV.r32 || []),
+    r16: pick(r16, PREV.r16 || []),
+    qf: pick(qf, PREV.qf || []),
+    sf: pick(sf, PREV.sf || []),
+    fourth, third, runnerUp, champion,
+    scorer: PREV.scorer || "",                 // golden boot decided at tournament end (manual)
+    eliminated: elim.size ? [...elim] : (PREV.eliminated || []),
     goals,
   };
 
@@ -129,14 +220,17 @@ async function main() {
 // Source: ESPN feed. Last update: ${stamp}.
 //   group  : 72 entries aligned to window.DATA.schedule ('1' home / 'E' draw / '2' away / null)
 //   scores : 72 entries [homeGoals, awayGoals] per group match (null if unplayed)
-//   r32/r16/qf/sf, placements, eliminated : maintained by hand (not from ESPN yet)
-//   goals : [{player, team, goals}] excluding own goals & shootout goals
+//   r32    : 32 qualifiers — ESPN draw if published, else derived from standings (top-2 + 8 best thirds)
+//   r16/qf/sf, placements, eliminated : from ESPN knockout fixtures as they're played
+//   scorer (golden boot) : decided at tournament end (manual)
+//   goals  : [{player, team, goals}] excluding own goals & shootout goals
 window.RESULTS = ${JSON.stringify(out, null, 2)};
 `;
 
   fs.writeFileSync(path.join(HERE, "results.js"), js);
   console.log(`Scanned ${scannedDays} day(s), ${finished} finished match(es).`);
   console.log(`Group results set: ${group.filter(Boolean).length}/${schedule.length}`);
+  console.log(`R32 ${r32.length} · R16 ${r16.length} · QF ${qf.length} · SF ${sf.length} · champ ${champion || "—"} · elim ${out.eliminated.length}`);
   console.log(`Scorers: ${goals.length} player(s), ${goals.reduce((s, g) => s + g.goals, 0)} goal(s).`);
 }
 
