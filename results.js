@@ -71,8 +71,8 @@ window.RESULTS = {
     "1",
     "2",
     "E",
-    null,
-    null,
+    "2",
+    "E",
     null,
     null,
     null,
@@ -337,8 +337,14 @@ window.RESULTS = {
       0,
       0
     ],
-    null,
-    null,
+    [
+      1,
+      5
+    ],
+    [
+      1,
+      1
+    ],
     null,
     null,
     null,
@@ -363,6 +369,8 @@ window.RESULTS = {
     "NED",
     "JPN",
     "SWE",
+    "BEL",
+    "EGY",
     "ESP",
     "CPV",
     "FRA",
@@ -415,6 +423,11 @@ window.RESULTS = {
     {
       "player": "Deniz Undav",
       "team": "GER",
+      "goals": 3
+    },
+    {
+      "player": "Elijah Just",
+      "team": "NZL",
       "goals": 3
     },
     {
@@ -483,11 +496,6 @@ window.RESULTS = {
       "goals": 2
     },
     {
-      "player": "Elijah Just",
-      "team": "NZL",
-      "goals": 2
-    },
-    {
       "player": "Ermin Mahmic",
       "team": "BIH",
       "goals": 2
@@ -513,6 +521,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Leandro Trossard",
+      "team": "BEL",
+      "goals": 2
+    },
+    {
       "player": "Maxi Araújo",
       "team": "URU",
       "goals": 2
@@ -530,6 +543,11 @@ window.RESULTS = {
     {
       "player": "Pape Gueye",
       "team": "SEN",
+      "goals": 2
+    },
+    {
+      "player": "Ramin Rezaeian",
+      "team": "IRN",
       "goals": 2
     },
     {
@@ -575,6 +593,11 @@ window.RESULTS = {
     {
       "player": "Alexander Isak",
       "team": "SWE",
+      "goals": 1
+    },
+    {
+      "player": "Alexis Saelemaekers",
+      "team": "BEL",
       "goals": 1
     },
     {
@@ -783,6 +806,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Kevin De Bruyne",
+      "team": "BEL",
+      "goals": 1
+    },
+    {
       "player": "Kevin Pina",
       "team": "CPV",
       "goals": 1
@@ -820,6 +848,11 @@ window.RESULTS = {
     {
       "player": "Luis Romo",
       "team": "MEX",
+      "goals": 1
+    },
+    {
+      "player": "Mahmoud Saber",
+      "team": "EGY",
       "goals": 1
     },
     {
@@ -948,11 +981,6 @@ window.RESULTS = {
       "goals": 1
     },
     {
-      "player": "Ramin Rezaeian",
-      "team": "IRN",
-      "goals": 1
-    },
-    {
       "player": "Raúl Jiménez",
       "team": "MEX",
       "goals": 1
@@ -960,6 +988,11 @@ window.RESULTS = {
     {
       "player": "Romano Schmid",
       "team": "AUT",
+      "goals": 1
+    },
+    {
+      "player": "Romelu Lukaku",
+      "team": "BEL",
       "goals": 1
     },
     {
