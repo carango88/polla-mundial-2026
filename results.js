@@ -73,8 +73,8 @@ window.RESULTS = {
     "E",
     "2",
     "E",
-    null,
-    null,
+    "2",
+    "1",
     null,
     null,
     null,
@@ -345,8 +345,14 @@ window.RESULTS = {
       1,
       1
     ],
-    null,
-    null,
+    [
+      0,
+      2
+    ],
+    [
+      2,
+      1
+    ],
     null,
     null,
     null,
@@ -378,7 +384,9 @@ window.RESULTS = {
     "ARG",
     "POR",
     "COL",
-    "ENG"
+    "ENG",
+    "CRO",
+    "GHA"
   ],
   "r16": [],
   "qf": [],
@@ -428,6 +436,11 @@ window.RESULTS = {
     {
       "player": "Elijah Just",
       "team": "NZL",
+      "goals": 3
+    },
+    {
+      "player": "Harry Kane",
+      "team": "ENG",
       "goals": 3
     },
     {
@@ -506,7 +519,7 @@ window.RESULTS = {
       "goals": 2
     },
     {
-      "player": "Harry Kane",
+      "player": "Jude Bellingham",
       "team": "ENG",
       "goals": 2
     },
@@ -671,6 +684,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Derrick Luckassen",
+      "team": "GHA",
+      "goals": 1
+    },
+    {
       "player": "Désiré Doué",
       "team": "FRA",
       "goals": 1
@@ -778,11 +796,6 @@ window.RESULTS = {
     {
       "player": "Jovo Lukic",
       "team": "BIH",
-      "goals": 1
-    },
-    {
-      "player": "Jude Bellingham",
-      "team": "ENG",
       "goals": 1
     },
     {
@@ -941,6 +954,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Nikola Vlasic",
+      "team": "CRO",
+      "goals": 1
+    },
+    {
       "player": "Nilson Angulo",
       "team": "ECU",
       "goals": 1
@@ -967,6 +985,11 @@ window.RESULTS = {
     },
     {
       "player": "Petar Musa",
+      "team": "CRO",
+      "goals": 1
+    },
+    {
+      "player": "Petar Sucic",
       "team": "CRO",
       "goals": 1
     },
