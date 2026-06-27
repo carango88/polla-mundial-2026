@@ -91,10 +91,33 @@ function sortGroupStats(stats, g, scores) {
   }
   return out;
 }
-// R32 qualifiers from standings: top-2 of every COMPLETE group, plus the 8 best
-// thirds once ALL 12 groups are complete. Used until ESPN publishes the draw.
+// Teams mathematically guaranteed a top-2 finish: top-2 (on points) in EVERY
+// possible combination of the group's remaining results. Brute-forces outcomes
+// (3^remaining, tiny). Catches obvious qualifiers before their group finishes.
+function clinchedTop2(g, scores) {
+  const base = {}; g.teams.forEach(t => base[t] = 0);
+  for (const mi of g.matches) {
+    const sc = scores[mi]; if (!sc) continue; const m = schedule[mi]; const [x, y] = sc;
+    if (x > y) base[m.home] += 3; else if (x < y) base[m.away] += 3; else { base[m.home]++; base[m.away]++; }
+  }
+  const remaining = g.matches.filter(i => !scores[i]);
+  const clinched = new Set(g.teams);
+  const combos = 3 ** remaining.length;
+  for (let c = 0; c < combos; c++) {
+    const pts = { ...base }; let cc = c;
+    for (const mi of remaining) {
+      const o = cc % 3; cc = (cc - o) / 3; const m = schedule[mi];
+      if (o === 0) pts[m.home] += 3; else if (o === 1) pts[m.away] += 3; else { pts[m.home]++; pts[m.away]++; }
+    }
+    for (const t of g.teams) if (g.teams.filter(o => o !== t && pts[o] > pts[t]).length > 1) clinched.delete(t);
+  }
+  return [...clinched];
+}
+// R32 qualifiers from standings: top-2 of every COMPLETE group + any team already
+// guaranteed top-2 in an unfinished group, plus the 8 best thirds once ALL 12 are
+// complete. Used until ESPN publishes the actual draw.
 function deriveR32(scores) {
-  const r32 = [], thirds = []; let allComplete = true;
+  const r32 = new Set(), thirds = []; let allComplete = true;
   for (const g of DATA.groups) {
     const complete = g.matches.every(i => scores[i]);
     const st = {}; g.teams.forEach(t => st[t] = { team: t, pts: 0, gf: 0, gc: 0, gd: 0 });
@@ -104,14 +127,16 @@ function deriveR32(scores) {
     }
     Object.values(st).forEach(t => t.gd = t.gf - t.gc);
     const sorted = sortGroupStats(Object.values(st), g, scores);
-    if (complete) { r32.push(sorted[0].team, sorted[1].team); thirds.push(sorted[2]); }
-    else allComplete = false;
+    if (complete) { r32.add(sorted[0].team); r32.add(sorted[1].team); thirds.push(sorted[2]); }
+    else { allComplete = false; for (const t of clinchedTop2(g, scores)) r32.add(t); }
+    // a 3rd-placed team on 4+ points is effectively a guaranteed best-eight third
+    if (sorted[2] && sorted[2].pts >= 4) r32.add(sorted[2].team);
   }
   if (allComplete) {
     thirds.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.team.localeCompare(b.team));
-    r32.push(...thirds.slice(0, 8).map(t => t.team));
+    for (const t of thirds.slice(0, 8)) r32.add(t.team);
   }
-  return r32;
+  return [...r32];
 }
 
 async function main() {
