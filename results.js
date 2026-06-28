@@ -75,8 +75,8 @@ window.RESULTS = {
     "E",
     "2",
     "1",
-    null,
-    null,
+    "2",
+    "E",
     "E",
     "1"
   ],
@@ -353,8 +353,14 @@ window.RESULTS = {
       2,
       1
     ],
-    null,
-    null,
+    [
+      1,
+      3
+    ],
+    [
+      3,
+      3
+    ],
     [
       0,
       0
@@ -388,12 +394,15 @@ window.RESULTS = {
     "FRA",
     "NOR",
     "ARG",
+    "AUT",
+    "ALG",
     "COL",
     "POR",
     "COD",
     "ENG",
     "CRO",
-    "GHA"
+    "GHA",
+    "SEN"
   ],
   "r16": [],
   "qf": [],
@@ -403,12 +412,29 @@ window.RESULTS = {
   "runnerUp": "",
   "champion": "",
   "scorer": "",
-  "eliminated": [],
+  "eliminated": [
+    "CZE",
+    "KOR",
+    "QAT",
+    "SCO",
+    "HAI",
+    "TUR",
+    "CUW",
+    "TUN",
+    "NZL",
+    "IRN",
+    "URU",
+    "KSA",
+    "IRQ",
+    "JOR",
+    "UZB",
+    "PAN"
+  ],
   "goals": [
     {
       "player": "Lionel Messi",
       "team": "ARG",
-      "goals": 5
+      "goals": 6
     },
     {
       "player": "Erling Haaland",
@@ -551,6 +577,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Marko Arnautovic",
+      "team": "AUT",
+      "goals": 2
+    },
+    {
       "player": "Maxi Araújo",
       "team": "URU",
       "goals": 2
@@ -573,6 +604,11 @@ window.RESULTS = {
     {
       "player": "Ramin Rezaeian",
       "team": "IRN",
+      "goals": 2
+    },
+    {
+      "player": "Riyad Mahrez",
+      "team": "ALG",
       "goals": 2
     },
     {
@@ -741,6 +777,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Giovani Lo Celso",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Giovanni Reyna",
       "team": "USA",
       "goals": 1
@@ -861,6 +902,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Lautaro Martínez",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Leo Østigard",
       "team": "NOR",
       "goals": 1
@@ -891,6 +937,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Marcel Sabitzer",
+      "team": "AUT",
+      "goals": 1
+    },
+    {
       "player": "Marcus Holmgren Pedersen",
       "team": "NOR",
       "goals": 1
@@ -898,11 +949,6 @@ window.RESULTS = {
     {
       "player": "Marcus Rashford",
       "team": "ENG",
-      "goals": 1
-    },
-    {
-      "player": "Marko Arnautovic",
-      "team": "AUT",
       "goals": 1
     },
     {
@@ -948,6 +994,11 @@ window.RESULTS = {
     {
       "player": "Mostafa Zico",
       "team": "EGY",
+      "goals": 1
+    },
+    {
+      "player": "Mousa Al-Tamari",
+      "team": "JOR",
       "goals": 1
     },
     {
@@ -1026,6 +1077,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Rafik Belghali",
+      "team": "ALG",
+      "goals": 1
+    },
+    {
       "player": "Raúl Jiménez",
       "team": "MEX",
       "goals": 1
@@ -1038,6 +1094,11 @@ window.RESULTS = {
     {
       "player": "Romelu Lukaku",
       "team": "BEL",
+      "goals": 1
+    },
+    {
+      "player": "Sasa Kalajdzic",
+      "team": "AUT",
       "goals": 1
     },
     {
