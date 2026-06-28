@@ -77,8 +77,8 @@ window.RESULTS = {
     "1",
     null,
     null,
-    null,
-    null
+    "E",
+    "1"
   ],
   "scores": [
     [
@@ -355,8 +355,14 @@ window.RESULTS = {
     ],
     null,
     null,
-    null,
-    null
+    [
+      0,
+      0
+    ],
+    [
+      3,
+      1
+    ]
   ],
   "r32": [
     "MEX",
@@ -382,8 +388,9 @@ window.RESULTS = {
     "FRA",
     "NOR",
     "ARG",
-    "POR",
     "COL",
+    "POR",
+    "COD",
     "ENG",
     "CRO",
     "GHA"
@@ -466,6 +473,11 @@ window.RESULTS = {
     {
       "player": "Matheus Cunha",
       "team": "BRA",
+      "goals": 3
+    },
+    {
+      "player": "Yoane Wissa",
+      "team": "COD",
       "goals": 3
     },
     {
@@ -694,6 +706,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Eldor Shomurodov",
+      "team": "UZB",
+      "goals": 1
+    },
+    {
       "player": "Emam Ashour",
       "team": "EGY",
       "goals": 1
@@ -706,6 +723,11 @@ window.RESULTS = {
     {
       "player": "Finn Surman",
       "team": "NZL",
+      "goals": 1
+    },
+    {
+      "player": "Fiston Mayele",
+      "team": "COD",
       "goals": 1
     },
     {
@@ -1061,11 +1083,6 @@ window.RESULTS = {
     {
       "player": "Wilson Isidor",
       "team": "HAI",
-      "goals": 1
-    },
-    {
-      "player": "Yoane Wissa",
-      "team": "COD",
       "goals": 1
     }
   ]
