@@ -1244,28 +1244,44 @@ function simScore(p){
 }
 function renderSim(){
   if(!simR32) initSim();
+  // Lock rounds that already have official results — only undecided rounds stay editable.
+  const lk={ r32:(results.r32||[]).length>0, r16:(results.r16||[]).length>0, qf:(results.qf||[]).length>0, sf:(results.sf||[]).length>0 };
+  if(lk.r32) simR32=new Set(results.r32);
+  if(lk.r16) simR16=new Set(results.r16);
+  if(lk.qf)  simQF =new Set(results.qf);
+  if(!lk.r16) simR16=new Set([...simR16].filter(c=>simR32.has(c)));   // keep children valid subsets
+  if(!lk.qf)  simQF =new Set([...simQF ].filter(c=>simR16.has(c)));
+  const podLockVal=[results.champion,results.runnerUp,results.third,results.fourth];
+  const podCands = lk.sf ? [...results.sf] : [...simQF];
+  simPodio=simPodio.map((c,i)=> podLockVal[i] ? podLockVal[i] : (c && podCands.includes(c) ? c : ""));
+  if(lk.sf){ const used=new Set(simPodio.filter(Boolean)); for(let i=0;i<4;i++) if(!simPodio[i]){ const free=podCands.find(t=>!used.has(t)); if(free){simPodio[i]=free;used.add(free);} } }
+  const lockGol=!!results.scorer; if(lockGol) simGoleador=results.scorer;
+
   const app=document.getElementById("app");
   const byName=[...D.participants].sort((a,b)=>a.name.localeCompare(b.name,'es'));
   const opts=sel=>byName.map(p=>`<option value="${enc(p.name)}" ${p.name===sel?'selected':''}>${p.name}</option>`).join("");
   const selBox=i=>`<select class="simsel" data-i="${i}" style="min-width:190px"><option value="">${i===0?'Participante…':'+ otro (opcional)'}</option>${opts(simNames[i])}</select>`;
   const dlist=`<datalist id="simnames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
 
-  const chip=(c,round,on)=>`<span class="pk ${on?'pk-ok':''} simchip" data-round="${round}" data-c="${c}" style="cursor:pointer"><span class="fl">${flagOf(c)}</span> ${c}</span>`;
-  const grid=(cands,set,round,max)=>`<div class="card">
-    <h3 style="margin-top:0">${round.toUpperCase()} <span class="muted" style="font-weight:400;font-size:12px">· ${set.size}/${max} · ${P[round.toLowerCase()]||({r32:2,r16:3,qf:4})[round.toLowerCase()]} pts c/u</span></h3>
-    <div class="pkwrap">${cands.map(c=>chip(c,round.toLowerCase(),set.has(c))).join("")}</div></div>`;
+  const chip=(c,round,on,locked)=> locked
+    ? `<span class="pk pk-ok" title="resultado oficial — bloqueado"><span class="fl">${flagOf(c)}</span> ${c}</span>`
+    : `<span class="pk ${on?'pk-ok':''} simchip" data-round="${round}" data-c="${c}" style="cursor:pointer"><span class="fl">${flagOf(c)}</span> ${c}</span>`;
+  const grid=(cands,set,round,max,locked)=>`<div class="card">
+    <h3 style="margin-top:0">${round.toUpperCase()} ${locked?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${set.size}${locked?' oficial':'/'+max} · ${P[round.toLowerCase()]||({r32:2,r16:3,qf:4})[round.toLowerCase()]} pts c/u</span></h3>
+    <div class="pkwrap">${(locked?[...set].sort():cands).map(c=>chip(c,round.toLowerCase(),set.has(c),locked)).join("")}</div></div>`;
 
-  const r32grid=grid(D.teams,simR32,"R32",32);
-  const r16grid=grid([...simR32].sort(),simR16,"R16",16);
-  const qfgrid =grid([...simR16].sort(),simQF,"QF",8);
-  const podSel=(i,label,pts)=>{const o=[...simQF].sort().map(c=>`<option value="${c}" ${simPodio[i]===c?'selected':''}>${nameOf(c)} (${c})</option>`).join("");
-    return `<div class="kv"><span>${label} <span class="muted">${pts} pts</span></span><select class="simpod" data-i="${i}"><option value="">—</option>${o}</select></div>`;};
-  const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) <span class="muted" style="font-weight:400;font-size:12px">· elige de los ${simQF.size} de Cuartos · semifinalistas = los 4 · 5 pts c/u</span></h3>
+  const r32grid=grid(D.teams,simR32,"R32",32,lk.r32);
+  const r16grid=grid([...simR32].sort(),simR16,"R16",16,lk.r16);
+  const qfgrid =grid([...simR16].sort(),simQF,"QF",8,lk.qf);
+  const podSel=(i,label,pts)=>{const locked=!!podLockVal[i];
+    const o=[...podCands].sort().map(c=>`<option value="${c}" ${simPodio[i]===c?'selected':''}>${nameOf(c)} (${c})</option>`).join("");
+    return `<div class="kv"><span>${label} <span class="muted">${pts} pts</span>${locked?' 🔒':''}</span><select class="simpod" data-i="${i}" ${locked?'disabled':''}><option value="">—</option>${o}</select></div>`;};
+  const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) ${lk.sf?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${lk.sf?'semifinalistas oficiales — ordénalos':'elige de los '+simQF.size+' de Cuartos'} · 5 pts c/u</span></h3>
     ${podSel(0,"🏆 Campeón",25)}${podSel(1,"🥈 Subcampeón",15)}${podSel(2,"🥉 3.º",10)}${podSel(3,"4.º",10)}</div>`;
   const golList=tally(D.participants.map(p=>p.scorer));   // [surname, count] by popularity
-  const golCard=`<div class="card"><h3 style="margin-top:0">👟 Goleador (bota de oro) <span class="muted" style="font-weight:400;font-size:12px">· 15 pts</span></h3>
+  const golCard=`<div class="card"><h3 style="margin-top:0">👟 Goleador (bota de oro) ${lockGol?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· 15 pts</span></h3>
     <div class="kv"><span>Goleador del torneo</span>
-      <select class="simgol" style="min-width:240px">
+      <select class="simgol" style="min-width:240px" ${lockGol?'disabled':''}>
         ${golList.map(([s,c])=>`<option value="${enc(s)}" ${simGoleador===s?'selected':''}>${s} (${c} eligieron)</option>`).join("")}
         <option value="${SIM_OTRO}" ${simGoleador===SIM_OTRO?'selected':''}>Otro goleador</option>
       </select></div></div>`;
@@ -1324,7 +1340,7 @@ function renderSim(){
       <input id="simsearch" class="search" list="simnames" placeholder="🔍 Buscar y añadir…" autocomplete="off">
       ${selBox(0)} ${selBox(1)} ${selBox(2)} ${dlist}</div>
     ${results_html}
-    <div class="card muted" style="font-size:12px">Construye el escenario: marca quién pasa a R32, luego R16 (solo de los de R32), Cuartos (solo de R16) y ordena el final four (de los de Cuartos). Los puntos de arriba se actualizan al instante.</div>
+    <div class="card muted" style="font-size:12px">Las rondas ya definidas aparecen bloqueadas 🔒 (resultado oficial). En las rondas pendientes eliges quién avanza: R16 solo de los de R32, Cuartos solo de R16, y ordenas el final four de los de Cuartos. Los puntos de arriba se actualizan al instante.</div>
     ${r32grid}${r16grid}${qfgrid}${podioCard}${golCard}`;
 
   document.querySelectorAll(".simsel").forEach(s=>s.onchange=e=>{simScroll=window.scrollY;simNames[+e.target.dataset.i]=e.target.value?dec(e.target.value):null;renderSim();});
