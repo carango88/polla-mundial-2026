@@ -1112,6 +1112,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Stephen Eustáquio",
+      "team": "CAN",
+      "goals": 1
+    },
+    {
       "player": "Teboho Mokoena",
       "team": "RSA",
       "goals": 1
