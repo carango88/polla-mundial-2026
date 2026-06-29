@@ -165,14 +165,27 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 .pk.pk-ok{border-color:rgba(58,210,159,.5);background:rgba(58,210,159,.1);color:var(--accent)}
 .pk.pk-out{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08);color:#ff9b9b;text-decoration:line-through}
 .pk.pk-out .muted{text-decoration:none}
-/* knockout bracket */
-.bracket{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px}
-.bcol{flex:0 0 auto;min-width:158px;display:flex;flex-direction:column;gap:10px;justify-content:center}
-.bch{font-weight:800;color:var(--accent);text-transform:uppercase;font-size:12px;letter-spacing:.5px;padding-bottom:5px;border-bottom:1px solid var(--line);position:sticky;top:0}
-.bcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;font-weight:700}
-.bcard .brow{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
-.bcard .bw,.bcard .bw .muted{color:var(--accent)}
-.bcard .bp{opacity:.55}
+/* knockout bracket — equal-height columns, matches distributed so later rounds align to midpoints */
+.bracket{display:flex;gap:18px;overflow-x:auto;padding-bottom:10px;align-items:stretch;min-height:600px}
+.bcol{flex:0 0 auto;width:178px;display:flex;flex-direction:column}
+.bch{font-weight:800;color:var(--accent);text-transform:uppercase;font-size:11px;letter-spacing:.6px;
+  padding-bottom:6px;margin-bottom:8px;border-bottom:1px solid var(--line);text-align:center}
+.bmatches{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:6px}
+.bcard{background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:12px;font-weight:700;position:relative}
+.bcard.bdone{border-color:#33406b}
+/* connector stub to the next round */
+.bcol:not(.bcol-final):not(.bcol-bronze) .bcard::after{content:"";position:absolute;top:50%;right:-18px;width:18px;height:1px;background:var(--line)}
+.bcard .brow{display:flex;justify-content:space-between;gap:6px;padding:6px 9px;align-items:center}
+.bcard .brow+.brow{border-top:1px solid var(--line)}
+.bcard .bnm{display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bcard .bnm .fl{font-size:14px}
+.bcard .bph{color:var(--muted);font-weight:400;font-size:11px}
+.bcard .bsc{color:var(--muted);font-variant-numeric:tabular-nums;min-width:14px;text-align:right}
+.bcard .brow.bw{background:rgba(58,210,159,.12)}
+.bcard .brow.bw .bnm,.bcard .brow.bw .bsc{color:var(--accent)}
+.bcard .brow.bl{opacity:.5}
+.bcard .brow.bl .bnm{text-decoration:line-through}
+.bcard.bp{border-style:dashed;opacity:.85}
 /* ───────── mobile ───────── */
 @media(max-width:640px){
   body{font-size:13px}

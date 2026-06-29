@@ -1368,29 +1368,28 @@ function renderBracket(){
   const app=document.getElementById("app");
   const B=results.bracket||[];
   const rounds=[["r32","Ronda de 32"],["r16","Octavos"],["qf","Cuartos"],["sf","Semifinales"],["final","Final"],["bronze","3.er puesto"]];
-  const teamLine=(code,score,isW,done)=>{
-    const nm = code ? `<span class="fl">${flagOf(code)}</span> ${code} <span class="muted" style="font-weight:400">${nameOf(code)}</span>`
-                    : '<span class="muted">Por definir</span>';
-    return `<div class="brow ${isW?'bw':''}"><span>${isW?'▸ ':''}${nm}</span><span class="muted">${done&&score!=null?score:''}</span></div>`;
+  const slot=(code,label,score,isW,lost,done)=>{
+    const nm = code ? `<span class="fl">${flagOf(code)}</span> ${code}`
+                    : `<span class="bph">${label||'Por definir'}</span>`;
+    return `<div class="brow ${isW?'bw':''} ${lost?'bl':''}"><span class="bnm">${nm}</span><span class="bsc">${done&&score!=null?score:''}</span></div>`;
   };
   const matchCard=m=>{
     const aW=m.done&&m.w&&m.w===m.a, bW=m.done&&m.w&&m.w===m.b;
-    return `<div class="bcard ${m.done?'':'bp'}">
-      ${teamLine(m.a,m.as,aW,m.done)}
-      ${teamLine(m.b,m.bs,bW,m.done)}
-      ${m.done?'':'<div class="muted" style="font-size:10px;text-align:center;margin-top:3px">por jugar</div>'}</div>`;
+    return `<div class="bcard ${m.done?'bdone':'bp'}">
+      ${slot(m.a,m.aLabel,m.as,aW,m.done&&!aW,m.done)}
+      ${slot(m.b,m.bLabel,m.bs,bW,m.done&&!bW,m.done)}</div>`;
   };
   const cols=rounds.map(([key,label])=>{
     const ms=B.filter(m=>m.round===key);
     if(!ms.length) return "";
-    return `<div class="bcol"><div class="bch">${label}</div>${ms.map(matchCard).join("")}</div>`;
+    return `<div class="bcol bcol-${key}"><div class="bch">${label}</div><div class="bmatches">${ms.map(matchCard).join("")}</div></div>`;
   }).join("");
   const champ=results.champion;
   app.innerHTML=`
     <div class="toprow"><span class="badge live">Bracket — eliminatorias</span>
-      ${champ?`<span class="muted">🏆 Campeón: <b class="ok">${flagOf(champ)} ${nameOf(champ)}</b></span>`:'<span class="muted">se actualiza con cada partido · el ganador avanza</span>'}</div>
+      ${champ?`<span class="muted">🏆 Campeón: <b class="ok">${flagOf(champ)} ${nameOf(champ)}</b></span>`:'<span class="muted">el ganador de cada llave avanza · los cruces salen del feed oficial</span>'}</div>
     ${B.length?`<div class="bracket">${cols}</div>
-      <div class="card muted" style="font-size:12px;margin-top:12px">El ganador (▸, en verde) avanza a la siguiente ronda. Los cruces y resultados vienen del feed oficial.</div>`
+      <div class="card muted" style="font-size:12px;margin-top:12px">Cada llave muestra a quién enfrentarías si avanzas: los espacios sin definir dicen, por ejemplo, “Ganador R32-3”. El ganador queda en verde; el perdedor, tachado.</div>`
       :'<div class="card muted">El bracket aparece cuando arrancan las eliminatorias (Ronda de 32).</div>'}`;
 }
 

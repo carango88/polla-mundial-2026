@@ -172,9 +172,15 @@ async function main() {
         const rd = roundOf(ev);
         if (rd) {
           const a = TEAMS.has(hAb) ? hAb : null, b = TEAMS.has(aAb) ? aAb : null;   // null = placeholder slot (TBD)
+          // ESPN names the unresolved slot after its feeder, e.g. "Round of 32 3 Winner" → short label
+          const slotLabel = d => (d || "").replace(/Round of 32 (\d+) Winner/i, "Ganador R32-$1")
+            .replace(/Round of 16 (\d+) Winner/i, "Ganador 8vos-$1").replace(/Quarterfinals? (\d+) Winner/i, "Ganador 4tos-$1")
+            .replace(/Semifinals? (\d+) Winner/i, "Ganador Semi-$1").replace(/Semifinals? (\d+) Loser/i, "Perdedor Semi-$1");
+          const aLabel = a ? null : slotLabel(home.team.displayName);
+          const bLabel = b ? null : slotLabel(away.team.displayName);
           const wAb = done ? (((comp.competitors.find(c => c.winner) || {}).team || {}).abbreviation) : null;
           const w = (wAb && TEAMS.has(wAb)) ? wAb : null;
-          bracket.push({ round: rd, a, b, as: done ? Number(home.score) : null, bs: done ? Number(away.score) : null, w, done: !!done });
+          bracket.push({ round: rd, a, aLabel, b, bLabel, as: done ? Number(home.score) : null, bs: done ? Number(away.score) : null, w, done: !!done });
           if (rd === "final" || rd === "bronze") {
             if (done) {
               const lAb = ((comp.competitors.find(c => !c.winner) || {}).team || {}).abbreviation;
