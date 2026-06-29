@@ -406,7 +406,8 @@ window.RESULTS = {
   ],
   "r16": [
     "CAN",
-    "BRA"
+    "BRA",
+    "PAR"
   ],
   "qf": [],
   "sf": [],
@@ -456,10 +457,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "GER",
       "b": "PAR",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 1,
+      "w": "PAR",
+      "done": true
     },
     {
       "round": "r32",
@@ -589,7 +590,7 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
+      "a": "PAR",
       "b": null,
       "as": null,
       "bs": null,
@@ -790,6 +791,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Kai Havertz",
+      "team": "GER",
+      "goals": 3
+    },
+    {
       "player": "Matheus Cunha",
       "team": "BRA",
       "goals": 3
@@ -857,11 +863,6 @@ window.RESULTS = {
     {
       "player": "Julián Quiñones",
       "team": "MEX",
-      "goals": 2
-    },
-    {
-      "player": "Kai Havertz",
-      "team": "GER",
       "goals": 2
     },
     {
@@ -1162,6 +1163,11 @@ window.RESULTS = {
     {
       "player": "Jovo Lukic",
       "team": "BIH",
+      "goals": 1
+    },
+    {
+      "player": "Julio Enciso",
+      "team": "PAR",
       "goals": 1
     },
     {
