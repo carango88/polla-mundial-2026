@@ -57,17 +57,17 @@ function scheduleIndex(a, b) {
   return schedule.findIndex(m => (m.home === a && m.away === b) || (m.home === b && m.away === a));
 }
 
-// Detect the knockout round of an ESPN event from its labels.
-function roundOf(ev, comp) {
-  const parts = [ev.season && ev.season.slug, ev.name, ev.shortName, comp && comp.type && comp.type.text];
-  if (comp && Array.isArray(comp.notes)) parts.push(comp.notes.map(n => n.headline).join(" "));
-  const txt = parts.filter(Boolean).join(" ").toLowerCase().replace(/[-_]/g, " ");   // ESPN slugs use hyphens (e.g. "round-of-32")
-  if (/round of 32|r32|1 16/.test(txt)) return "r32";
-  if (/round of 16|r16|1 8|eighth|octavos/.test(txt)) return "r16";
-  if (/quarter|cuartos/.test(txt)) return "qf";
-  if (/semi/.test(txt)) return "sf";
-  if (/3rd place|third place|bronze/.test(txt)) return "bronze";
-  if (/\bfinal\b/.test(txt)) return "final";
+// Detect the knockout round from the ESPN season SLUG only. (Event names/notes
+// reference the feeder round — e.g. an R16 fixture's name says "Round of 32
+// winner" — so using them mislabels every round. The slug is clean.)
+function roundOf(ev) {
+  const slug = ((ev.season && ev.season.slug) || "").toLowerCase();
+  if (/round-of-32/.test(slug)) return "r32";
+  if (/round-of-16/.test(slug)) return "r16";
+  if (/quarter/.test(slug)) return "qf";
+  if (/semi/.test(slug)) return "sf";
+  if (/3rd|third|bronze/.test(slug)) return "bronze";
+  if (/final/.test(slug)) return "final";
   return null;
 }
 // Group ranking per FIFA Art.13: points → head-to-head (pts/GD/GF among tied) → overall GD → GF → name.
@@ -146,15 +146,18 @@ async function main() {
   const scores = Array(schedule.length).fill(null);   // [home, away] goals per group match
   const goalMap = new Map();   // key `player|TEAM` -> {player, team, goals}
   const ko = { r32: new Set(), r16: new Set(), qf: new Set(), sf: new Set() };  // teams reaching each knockout round
+  const bracket = [];                  // knockout fixtures for the bracket view {round,a,b,as,bs,w,done}
   const TEAMS = new Set(DATA.teams);   // real 3-letter codes — reject ESPN bracket placeholders ("RD16 W1", etc.)
   let finalMatch = null, bronzeMatch = null;
   let scannedDays = 0, finished = 0;
+  const seenEv = new Set();   // dedupe events that appear on adjacent date scoreboards
 
   for (const date of dateRange(START)) {
     const sb = await getJSON(SB(date));
     scannedDays++;
     if (!sb || !sb.events) continue;
     for (const ev of sb.events) {
+      if (seenEv.has(ev.id)) continue; seenEv.add(ev.id);
       const comp = ev.competitions && ev.competitions[0];
       if (!comp) continue;
       const home = comp.competitors.find(c => c.homeAway === "home");
@@ -166,18 +169,23 @@ async function main() {
 
       // knockout participation — captured even before kickoff (reaching a round is what scores)
       if (idx < 0) {
-        const rd = roundOf(ev, comp);
-        if (rd === "final" || rd === "bronze") {
-          if (done) {
-            const w = comp.competitors.find(c => c.winner), l = comp.competitors.find(c => !c.winner);
-            const rec = { win: w && w.team.abbreviation, lose: l && l.team.abbreviation };
-            if (rd === "final") finalMatch = rec; else bronzeMatch = rec;
+        const rd = roundOf(ev);
+        if (rd) {
+          const a = TEAMS.has(hAb) ? hAb : null, b = TEAMS.has(aAb) ? aAb : null;   // null = placeholder slot (TBD)
+          const wAb = done ? (((comp.competitors.find(c => c.winner) || {}).team || {}).abbreviation) : null;
+          const w = (wAb && TEAMS.has(wAb)) ? wAb : null;
+          bracket.push({ round: rd, a, b, as: done ? Number(home.score) : null, bs: done ? Number(away.score) : null, w, done: !!done });
+          if (rd === "final" || rd === "bronze") {
+            if (done) {
+              const lAb = ((comp.competitors.find(c => !c.winner) || {}).team || {}).abbreviation;
+              const rec = { win: w || "", lose: (lAb && TEAMS.has(lAb)) ? lAb : "" };
+              if (rd === "final") finalMatch = rec; else bronzeMatch = rec;
+            }
+          } else {
+            if (a) ko[rd].add(a); if (b) ko[rd].add(b);     // both teams reached this round
+            const adv = { r32: "r16", r16: "qf", qf: "sf" }[rd];
+            if (done && adv && w) ko[adv].add(w);            // winner advances
           }
-        } else if (rd) {
-          if (TEAMS.has(hAb)) ko[rd].add(hAb);               // both teams reached this round (ignore placeholders)
-          if (TEAMS.has(aAb)) ko[rd].add(aAb);
-          const adv = { r32: "r16", r16: "qf", qf: "sf" }[rd];
-          if (done && adv) { const w = comp.competitors.find(c => c.winner); if (w && TEAMS.has(w.team.abbreviation)) ko[adv].add(w.team.abbreviation); }  // winner advances
         }
       }
 
@@ -238,6 +246,7 @@ async function main() {
     fourth, third, runnerUp, champion,
     scorer: PREV.scorer || "",                 // golden boot decided at tournament end (manual)
     eliminated: [...elim],
+    bracket,
     goals,
   };
 
