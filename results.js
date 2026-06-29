@@ -405,7 +405,8 @@ window.RESULTS = {
     "GHA"
   ],
   "r16": [
-    "CAN"
+    "CAN",
+    "BRA"
   ],
   "qf": [],
   "sf": [],
@@ -446,10 +447,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "BRA",
       "b": "JPN",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 1,
+      "w": "BRA",
+      "done": true
     },
     {
       "round": "r32",
@@ -597,7 +598,7 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
+      "a": "BRA",
       "b": null,
       "as": null,
       "bs": null,
@@ -1014,6 +1015,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Casemiro",
+      "team": "BRA",
+      "goals": 1
+    },
+    {
       "player": "Connor Metcalfe",
       "team": "AUS",
       "goals": 1
@@ -1061,6 +1067,11 @@ window.RESULTS = {
     {
       "player": "Franck Kessié",
       "team": "CIV",
+      "goals": 1
+    },
+    {
+      "player": "Gabriel Martinelli",
+      "team": "BRA",
       "goals": 1
     },
     {
@@ -1161,6 +1172,11 @@ window.RESULTS = {
     {
       "player": "Kaan Ayhan",
       "team": "TUR",
+      "goals": 1
+    },
+    {
+      "player": "Kaishu Sano",
+      "team": "JPN",
       "goals": 1
     },
     {
