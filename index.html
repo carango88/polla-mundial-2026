@@ -165,6 +165,14 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
 .pk.pk-ok{border-color:rgba(58,210,159,.5);background:rgba(58,210,159,.1);color:var(--accent)}
 .pk.pk-out{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08);color:#ff9b9b;text-decoration:line-through}
 .pk.pk-out .muted{text-decoration:none}
+/* knockout bracket */
+.bracket{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px}
+.bcol{flex:0 0 auto;min-width:158px;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.bch{font-weight:800;color:var(--accent);text-transform:uppercase;font-size:12px;letter-spacing:.5px;padding-bottom:5px;border-bottom:1px solid var(--line);position:sticky;top:0}
+.bcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;font-weight:700}
+.bcard .brow{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+.bcard .bw,.bcard .bw .muted{color:var(--accent)}
+.bcard .bp{opacity:.55}
 /* ───────── mobile ───────── */
 @media(max-width:640px){
   body{font-size:13px}
@@ -233,6 +241,7 @@ code{background:var(--panel2);padding:1px 5px;border-radius:5px}
     <div class="tab" data-tab="analysis"><span class="te">🔬</span><span class="tl">Análisis</span></div>
     <div class="tab" data-tab="compare"><span class="te">⚖️</span><span class="tl">Comparar</span></div>
     <div class="tab" data-prio="2" data-tab="groups"><span class="te">📋</span><span class="tl">Grupos Live</span></div>
+    <div class="tab" data-prio="2" data-tab="bracket"><span class="te">🏟️</span><span class="tl">Bracket</span></div>
     <div class="tab" data-prio="2" data-tab="goals"><span class="te">⚽</span><span class="tl">Goleadores</span></div>
     <div class="tab" data-prio="2" data-tab="sim"><span class="te">🎲</span><span class="tl">Simulador</span></div>
     <div class="tab" data-prio="2" data-tab="tracked"><span class="te">👀</span><span class="tl">Los que son</span></div>

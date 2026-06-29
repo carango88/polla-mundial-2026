@@ -21,6 +21,7 @@ function blankResults(){
            r32:[], r16:[], qf:[], sf:[],
            fourth:"", third:"", runnerUp:"", champion:"", scorer:"",
            eliminated:[],     // teams that can no longer advance (knock out of contention)
+           bracket:[],        // knockout fixtures {round,a,b,as,bs,w,done}
            goals:[] };        // official goal scorers {player, team, goals}
 }
 // Layer the official (hard-coded) results from results.js on top of anything
@@ -33,6 +34,7 @@ function applyOfficial(r){
   for(const k of ["r32","r16","qf","sf"]) if(Array.isArray(o[k])&&o[k].length) r[k]=o[k].slice();
   for(const k of ["fourth","third","runnerUp","champion","scorer"]) if(o[k]) r[k]=o[k];
   if(Array.isArray(o.eliminated)) r.eliminated=o.eliminated.slice();
+  if(Array.isArray(o.bracket)) r.bracket=o.bracket.slice();
   if(Array.isArray(o.goals)) r.goals=o.goals.slice();
   return r;
 }
@@ -76,7 +78,7 @@ function scoreAll(){
 
 // ---- routing ------------------------------------------------------------
 let tab="leaderboard", sortKey="total", detailName=null;
-const SECONDARY=["groups","goals","sim","tracked","stats"];
+const SECONDARY=["groups","bracket","goals","sim","tracked","stats"];
 function selectTab(name){
   tab=name;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
@@ -1361,11 +1363,43 @@ function renderSim(){
   if(simScroll){ window.scrollTo(0,simScroll); simScroll=0; }
 }
 
+// ---- BRACKET: knockout tree from results.bracket -----------------------
+function renderBracket(){
+  const app=document.getElementById("app");
+  const B=results.bracket||[];
+  const rounds=[["r32","Ronda de 32"],["r16","Octavos"],["qf","Cuartos"],["sf","Semifinales"],["final","Final"],["bronze","3.er puesto"]];
+  const teamLine=(code,score,isW,done)=>{
+    const nm = code ? `<span class="fl">${flagOf(code)}</span> ${code} <span class="muted" style="font-weight:400">${nameOf(code)}</span>`
+                    : '<span class="muted">Por definir</span>';
+    return `<div class="brow ${isW?'bw':''}"><span>${isW?'▸ ':''}${nm}</span><span class="muted">${done&&score!=null?score:''}</span></div>`;
+  };
+  const matchCard=m=>{
+    const aW=m.done&&m.w&&m.w===m.a, bW=m.done&&m.w&&m.w===m.b;
+    return `<div class="bcard ${m.done?'':'bp'}">
+      ${teamLine(m.a,m.as,aW,m.done)}
+      ${teamLine(m.b,m.bs,bW,m.done)}
+      ${m.done?'':'<div class="muted" style="font-size:10px;text-align:center;margin-top:3px">por jugar</div>'}</div>`;
+  };
+  const cols=rounds.map(([key,label])=>{
+    const ms=B.filter(m=>m.round===key);
+    if(!ms.length) return "";
+    return `<div class="bcol"><div class="bch">${label}</div>${ms.map(matchCard).join("")}</div>`;
+  }).join("");
+  const champ=results.champion;
+  app.innerHTML=`
+    <div class="toprow"><span class="badge live">Bracket — eliminatorias</span>
+      ${champ?`<span class="muted">🏆 Campeón: <b class="ok">${flagOf(champ)} ${nameOf(champ)}</b></span>`:'<span class="muted">se actualiza con cada partido · el ganador avanza</span>'}</div>
+    ${B.length?`<div class="bracket">${cols}</div>
+      <div class="card muted" style="font-size:12px;margin-top:12px">El ganador (▸, en verde) avanza a la siguiente ronda. Los cruces y resultados vienen del feed oficial.</div>`
+      :'<div class="card muted">El bracket aparece cuando arrancan las eliminatorias (Ronda de 32).</div>'}`;
+}
+
 function render(){
   window.onscroll=null;   // clear any prior scroll-spy
   tab==="leaderboard"?renderLeaderboard():
   tab==="results"?renderResults():
   tab==="groups"?renderGroups():
+  tab==="bracket"?renderBracket():
   tab==="tracked"?renderTracked():
   tab==="analysis"?renderAnalysis():
   tab==="compare"?renderCompare():
