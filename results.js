@@ -371,40 +371,42 @@ window.RESULTS = {
     ]
   ],
   "r32": [
-    "MEX",
     "RSA",
-    "SUI",
     "CAN",
-    "BIH",
     "BRA",
-    "MAR",
-    "USA",
-    "AUS",
-    "PAR",
-    "GER",
-    "CIV",
-    "ECU",
-    "NED",
     "JPN",
-    "SWE",
-    "BEL",
-    "EGY",
-    "ESP",
-    "CPV",
-    "FRA",
+    "GER",
+    "PAR",
+    "NED",
+    "MAR",
+    "CIV",
     "NOR",
-    "ARG",
-    "AUT",
-    "ALG",
-    "COL",
-    "POR",
-    "COD",
+    "FRA",
+    "SWE",
+    "MEX",
+    "ECU",
     "ENG",
+    "COD",
+    "BEL",
+    "SEN",
+    "USA",
+    "BIH",
+    "ESP",
+    "AUT",
+    "POR",
     "CRO",
-    "GHA",
-    "SEN"
+    "SUI",
+    "ALG",
+    "AUS",
+    "EGY",
+    "ARG",
+    "CPV",
+    "COL",
+    "GHA"
   ],
-  "r16": [],
+  "r16": [
+    "CAN"
+  ],
   "qf": [],
   "sf": [],
   "fourth": "",
@@ -429,6 +431,296 @@ window.RESULTS = {
     "JOR",
     "UZB",
     "PAN"
+  ],
+  "bracket": [
+    {
+      "round": "r32",
+      "a": "RSA",
+      "b": "CAN",
+      "as": 0,
+      "bs": 1,
+      "w": "CAN",
+      "done": true
+    },
+    {
+      "round": "r32",
+      "a": "BRA",
+      "b": "JPN",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "GER",
+      "b": "PAR",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "NED",
+      "b": "MAR",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "CIV",
+      "b": "NOR",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "FRA",
+      "b": "SWE",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "MEX",
+      "b": "ECU",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "ENG",
+      "b": "COD",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "BEL",
+      "b": "SEN",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "USA",
+      "b": "BIH",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "ESP",
+      "b": "AUT",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "POR",
+      "b": "CRO",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "SUI",
+      "b": "ALG",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "AUS",
+      "b": "EGY",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "ARG",
+      "b": "CPV",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r32",
+      "a": "COL",
+      "b": "GHA",
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": "CAN",
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "r16",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "qf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "qf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "qf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "qf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "sf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "sf",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "bronze",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    },
+    {
+      "round": "final",
+      "a": null,
+      "b": null,
+      "as": null,
+      "bs": null,
+      "w": null,
+      "done": false
+    }
   ],
   "goals": [
     {
