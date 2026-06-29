@@ -41,7 +41,9 @@ async function getJSON(url) {
 
 function* dateRange(startISO) {
   const start = new Date(startISO + "T00:00:00Z");
-  const end = new Date(); end.setUTCDate(end.getUTCDate() + 1);   // through tomorrow (UTC) so today's/late games are never missed
+  // scan the whole tournament window so upcoming knockout FIXTURES (R32/R16/…) are
+  // captured for the bracket, not just matches up to today
+  const end = new Date("2026-07-20T00:00:00Z");
   for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
     const y = d.getUTCFullYear(), m = String(d.getUTCMonth() + 1).padStart(2, "0"), day = String(d.getUTCDate()).padStart(2, "0");
     yield `${y}${m}${day}`;
@@ -59,12 +61,12 @@ function scheduleIndex(a, b) {
 function roundOf(ev, comp) {
   const parts = [ev.season && ev.season.slug, ev.name, ev.shortName, comp && comp.type && comp.type.text];
   if (comp && Array.isArray(comp.notes)) parts.push(comp.notes.map(n => n.headline).join(" "));
-  const txt = parts.filter(Boolean).join(" ").toLowerCase();
-  if (/round of 32|r32|1\/16|round32/.test(txt)) return "r32";
-  if (/round of 16|r16|1\/8|eighth|octavos/.test(txt)) return "r16";
-  if (/quarter|1\/4|cuartos/.test(txt)) return "qf";
+  const txt = parts.filter(Boolean).join(" ").toLowerCase().replace(/[-_]/g, " ");   // ESPN slugs use hyphens (e.g. "round-of-32")
+  if (/round of 32|r32|1 16/.test(txt)) return "r32";
+  if (/round of 16|r16|1 8|eighth|octavos/.test(txt)) return "r16";
+  if (/quarter|cuartos/.test(txt)) return "qf";
   if (/semi/.test(txt)) return "sf";
-  if (/3rd place|third place|play-?off for third|bronze/.test(txt)) return "bronze";
+  if (/3rd place|third place|bronze/.test(txt)) return "bronze";
   if (/\bfinal\b/.test(txt)) return "final";
   return null;
 }
@@ -144,6 +146,7 @@ async function main() {
   const scores = Array(schedule.length).fill(null);   // [home, away] goals per group match
   const goalMap = new Map();   // key `player|TEAM` -> {player, team, goals}
   const ko = { r32: new Set(), r16: new Set(), qf: new Set(), sf: new Set() };  // teams reaching each knockout round
+  const TEAMS = new Set(DATA.teams);   // real 3-letter codes — reject ESPN bracket placeholders ("RD16 W1", etc.)
   let finalMatch = null, bronzeMatch = null;
   let scannedDays = 0, finished = 0;
 
@@ -170,7 +173,12 @@ async function main() {
             const rec = { win: w && w.team.abbreviation, lose: l && l.team.abbreviation };
             if (rd === "final") finalMatch = rec; else bronzeMatch = rec;
           }
-        } else if (rd) { ko[rd].add(hAb); ko[rd].add(aAb); }
+        } else if (rd) {
+          if (TEAMS.has(hAb)) ko[rd].add(hAb);               // both teams reached this round (ignore placeholders)
+          if (TEAMS.has(aAb)) ko[rd].add(aAb);
+          const adv = { r32: "r16", r16: "qf", qf: "sf" }[rd];
+          if (done && adv) { const w = comp.competitors.find(c => c.winner); if (w && TEAMS.has(w.team.abbreviation)) ko[adv].add(w.team.abbreviation); }  // winner advances
+        }
       }
 
       if (!done) continue;
@@ -210,14 +218,13 @@ async function main() {
 
   const goals = [...goalMap.values()].sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player));
 
-  // ----- knockout fields -----
-  // R32: prefer ESPN's actual draw; otherwise derive from group standings.
-  let r32 = [...ko.r32];
-  if (r32.length === 0) r32 = deriveR32(scores);
+  // ----- knockout fields ----- (updater is the source of truth; no stale-PREV fallback)
+  // R32: ESPN's actual draw once fully published (32 teams); else derive from standings.
+  const r32 = ko.r32.size >= 32 ? [...ko.r32] : deriveR32(scores);
   const r16 = [...ko.r16], qf = [...ko.qf], sf = [...ko.sf];
-  let champion = PREV.champion || "", runnerUp = PREV.runnerUp || "", third = PREV.third || "", fourth = PREV.fourth || "";
-  if (finalMatch) { champion = finalMatch.win || champion; runnerUp = finalMatch.lose || runnerUp; }
-  if (bronzeMatch) { third = bronzeMatch.win || third; fourth = bronzeMatch.lose || fourth; }
+  let champion = "", runnerUp = "", third = "", fourth = "";
+  if (finalMatch) { champion = finalMatch.win || ""; runnerUp = finalMatch.lose || ""; }
+  if (bronzeMatch) { third = bronzeMatch.win || ""; fourth = bronzeMatch.lose || ""; }
 
   // eliminated: teams that fell at a boundary we know in full (drives the "ganables" math)
   const elim = new Set();
@@ -225,17 +232,12 @@ async function main() {
   if (r32.length === 32) for (const g of DATA.groups) for (const t of g.teams) if (!r32.includes(t)) elim.add(t);
   cut(r32, r16, 16); cut(r16, qf, 8); cut(qf, sf, 4);
 
-  const pick = (val, prev) => (val && val.length) ? val : prev;
   const out = {
-    group,
-    scores,
-    r32: pick(r32, PREV.r32 || []),
-    r16: pick(r16, PREV.r16 || []),
-    qf: pick(qf, PREV.qf || []),
-    sf: pick(sf, PREV.sf || []),
+    group, scores,
+    r32, r16, qf, sf,
     fourth, third, runnerUp, champion,
     scorer: PREV.scorer || "",                 // golden boot decided at tournament end (manual)
-    eliminated: elim.size ? [...elim] : (PREV.eliminated || []),
+    eliminated: [...elim],
     goals,
   };
 
