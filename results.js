@@ -407,7 +407,8 @@ window.RESULTS = {
   "r16": [
     "CAN",
     "BRA",
-    "PAR"
+    "PAR",
+    "MAR"
   ],
   "qf": [],
   "sf": [],
@@ -466,10 +467,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "NED",
       "b": "MAR",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 1,
+      "w": "MAR",
+      "done": true
     },
     {
       "round": "r32",
@@ -582,7 +583,7 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "CAN",
-      "b": null,
+      "b": "MAR",
       "as": null,
       "bs": null,
       "w": null,
@@ -756,6 +757,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Cody Gakpo",
+      "team": "NED",
+      "goals": 3
+    },
+    {
       "player": "Deniz Undav",
       "team": "GER",
       "goals": 3
@@ -813,11 +819,6 @@ window.RESULTS = {
     {
       "player": "Ayase Ueda",
       "team": "JPN",
-      "goals": 2
-    },
-    {
-      "player": "Cody Gakpo",
-      "team": "NED",
       "goals": 2
     },
     {
@@ -1133,6 +1134,11 @@ window.RESULTS = {
     {
       "player": "Iliman Ndiaye",
       "team": "SEN",
+      "goals": 1
+    },
+    {
+      "player": "Issa Diop",
+      "team": "MAR",
       "goals": 1
     },
     {
