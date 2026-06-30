@@ -408,7 +408,8 @@ window.RESULTS = {
     "CAN",
     "BRA",
     "PAR",
-    "MAR"
+    "MAR",
+    "NOR"
   ],
   "qf": [],
   "sf": [],
@@ -476,10 +477,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "CIV",
       "b": "NOR",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 2,
+      "w": "NOR",
+      "done": true
     },
     {
       "round": "r32",
@@ -601,7 +602,7 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "BRA",
-      "b": null,
+      "b": "NOR",
       "as": null,
       "bs": null,
       "w": null,
@@ -734,7 +735,7 @@ window.RESULTS = {
     {
       "player": "Erling Haaland",
       "team": "NOR",
-      "goals": 4
+      "goals": 5
     },
     {
       "player": "Kylian Mbappé",
@@ -810,6 +811,11 @@ window.RESULTS = {
       "player": "Yoane Wissa",
       "team": "COD",
       "goals": 3
+    },
+    {
+      "player": "Amad Diallo",
+      "team": "CIV",
+      "goals": 2
     },
     {
       "player": "Anthony Elanga",
@@ -967,11 +973,6 @@ window.RESULTS = {
       "goals": 1
     },
     {
-      "player": "Amad Diallo",
-      "team": "CIV",
-      "goals": 1
-    },
-    {
       "player": "Amine Gouiri",
       "team": "ALG",
       "goals": 1
@@ -979,6 +980,11 @@ window.RESULTS = {
     {
       "player": "Ante Budimir",
       "team": "CRO",
+      "goals": 1
+    },
+    {
+      "player": "Antonio Nusa",
+      "team": "NOR",
       "goals": 1
     },
     {
