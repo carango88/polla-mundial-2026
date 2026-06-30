@@ -409,7 +409,8 @@ window.RESULTS = {
     "BRA",
     "PAR",
     "MAR",
-    "NOR"
+    "NOR",
+    "FRA"
   ],
   "qf": [],
   "sf": [],
@@ -486,10 +487,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "FRA",
       "b": "SWE",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 0,
+      "w": "FRA",
+      "done": true
     },
     {
       "round": "r32",
@@ -593,7 +594,7 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "PAR",
-      "b": null,
+      "b": "FRA",
       "as": null,
       "bs": null,
       "w": null,
@@ -728,6 +729,11 @@ window.RESULTS = {
   ],
   "goals": [
     {
+      "player": "Kylian Mbappé",
+      "team": "FRA",
+      "goals": 6
+    },
+    {
       "player": "Lionel Messi",
       "team": "ARG",
       "goals": 6
@@ -736,11 +742,6 @@ window.RESULTS = {
       "player": "Erling Haaland",
       "team": "NOR",
       "goals": 5
-    },
-    {
-      "player": "Kylian Mbappé",
-      "team": "FRA",
-      "goals": 4
     },
     {
       "player": "Ousmane Dembélé",
@@ -825,6 +826,11 @@ window.RESULTS = {
     {
       "player": "Ayase Ueda",
       "team": "JPN",
+      "goals": 2
+    },
+    {
+      "player": "Bradley Barcola",
+      "team": "FRA",
       "goals": 2
     },
     {
@@ -1005,11 +1011,6 @@ window.RESULTS = {
     {
       "player": "Baris Alper Yilmaz",
       "team": "TUR",
-      "goals": 1
-    },
-    {
-      "player": "Bradley Barcola",
-      "team": "FRA",
       "goals": 1
     },
     {
