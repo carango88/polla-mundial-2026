@@ -411,7 +411,8 @@ window.RESULTS = {
     "MAR",
     "NOR",
     "FRA",
-    "MEX"
+    "MEX",
+    "ENG"
   ],
   "qf": [],
   "sf": [],
@@ -506,10 +507,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "ENG",
       "b": "COD",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 1,
+      "w": "ENG",
+      "done": true
     },
     {
       "round": "r32",
@@ -613,7 +614,7 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "MEX",
-      "b": null,
+      "b": "ENG",
       "as": null,
       "bs": null,
       "w": null,
@@ -745,6 +746,11 @@ window.RESULTS = {
       "goals": 5
     },
     {
+      "player": "Harry Kane",
+      "team": "ENG",
+      "goals": 5
+    },
+    {
       "player": "Ousmane Dembélé",
       "team": "FRA",
       "goals": 4
@@ -772,11 +778,6 @@ window.RESULTS = {
     {
       "player": "Elijah Just",
       "team": "NZL",
-      "goals": 3
-    },
-    {
-      "player": "Harry Kane",
-      "team": "ENG",
       "goals": 3
     },
     {
@@ -1022,6 +1023,11 @@ window.RESULTS = {
     {
       "player": "Breel Embolo",
       "team": "SUI",
+      "goals": 1
+    },
+    {
+      "player": "Brian Cipenga",
+      "team": "COD",
       "goals": 1
     },
     {
