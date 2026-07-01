@@ -410,7 +410,8 @@ window.RESULTS = {
     "PAR",
     "MAR",
     "NOR",
-    "FRA"
+    "FRA",
+    "MEX"
   ],
   "qf": [],
   "sf": [],
@@ -496,10 +497,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "MEX",
       "b": "ECU",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 0,
+      "w": "MEX",
+      "done": true
     },
     {
       "round": "r32",
@@ -611,7 +612,7 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
+      "a": "MEX",
       "b": null,
       "as": null,
       "bs": null,
@@ -799,6 +800,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Julián Quiñones",
+      "team": "MEX",
+      "goals": 3
+    },
+    {
       "player": "Kai Havertz",
       "team": "GER",
       "goals": 3
@@ -874,11 +880,6 @@ window.RESULTS = {
       "goals": 2
     },
     {
-      "player": "Julián Quiñones",
-      "team": "MEX",
-      "goals": 2
-    },
-    {
       "player": "Leandro Trossard",
       "team": "BEL",
       "goals": 2
@@ -911,6 +912,11 @@ window.RESULTS = {
     {
       "player": "Ramin Rezaeian",
       "team": "IRN",
+      "goals": 2
+    },
+    {
+      "player": "Raúl Jiménez",
+      "team": "MEX",
       "goals": 2
     },
     {
@@ -1406,11 +1412,6 @@ window.RESULTS = {
     {
       "player": "Rafik Belghali",
       "team": "ALG",
-      "goals": 1
-    },
-    {
-      "player": "Raúl Jiménez",
-      "team": "MEX",
       "goals": 1
     },
     {
