@@ -412,7 +412,8 @@ window.RESULTS = {
     "NOR",
     "FRA",
     "MEX",
-    "ENG"
+    "ENG",
+    "BEL"
   ],
   "qf": [],
   "sf": [],
@@ -516,10 +517,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "BEL",
       "b": "SEN",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 2,
+      "w": "BEL",
+      "done": true
     },
     {
       "round": "r32",
@@ -632,7 +633,7 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": null,
-      "b": null,
+      "b": "BEL",
       "as": null,
       "bs": null,
       "w": null,
@@ -751,6 +752,11 @@ window.RESULTS = {
       "goals": 5
     },
     {
+      "player": "Ismaïla Sarr",
+      "team": "SEN",
+      "goals": 4
+    },
+    {
       "player": "Ousmane Dembélé",
       "team": "FRA",
       "goals": 4
@@ -783,11 +789,6 @@ window.RESULTS = {
     {
       "player": "Ismael Saibari",
       "team": "MAR",
-      "goals": 3
-    },
-    {
-      "player": "Ismaïla Sarr",
-      "team": "SEN",
       "goals": 3
     },
     {
@@ -876,6 +877,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Habib Diarra",
+      "team": "SEN",
+      "goals": 2
+    },
+    {
       "player": "Jude Bellingham",
       "team": "ENG",
       "goals": 2
@@ -926,6 +932,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Romelu Lukaku",
+      "team": "BEL",
+      "goals": 2
+    },
+    {
       "player": "Rubén Vargas",
       "team": "SUI",
       "goals": 2
@@ -933,6 +944,11 @@ window.RESULTS = {
     {
       "player": "Yasin Ayari",
       "team": "SWE",
+      "goals": 2
+    },
+    {
+      "player": "Youri Tielemans",
+      "team": "BEL",
       "goals": 2
     },
     {
@@ -1118,11 +1134,6 @@ window.RESULTS = {
     {
       "player": "Granit Xhaka",
       "team": "SUI",
-      "goals": 1
-    },
-    {
-      "player": "Habib Diarra",
-      "team": "SEN",
       "goals": 1
     },
     {
@@ -1423,11 +1434,6 @@ window.RESULTS = {
     {
       "player": "Romano Schmid",
       "team": "AUT",
-      "goals": 1
-    },
-    {
-      "player": "Romelu Lukaku",
-      "team": "BEL",
       "goals": 1
     },
     {
