@@ -445,7 +445,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "RSA",
+      "aLabel": null,
       "b": "CAN",
+      "bLabel": null,
       "as": 0,
       "bs": 1,
       "w": "CAN",
@@ -454,7 +456,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "BRA",
+      "aLabel": null,
       "b": "JPN",
+      "bLabel": null,
       "as": 2,
       "bs": 1,
       "w": "BRA",
@@ -463,7 +467,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "GER",
+      "aLabel": null,
       "b": "PAR",
+      "bLabel": null,
       "as": 1,
       "bs": 1,
       "w": "PAR",
@@ -472,7 +478,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "NED",
+      "aLabel": null,
       "b": "MAR",
+      "bLabel": null,
       "as": 1,
       "bs": 1,
       "w": "MAR",
@@ -481,7 +489,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "CIV",
+      "aLabel": null,
       "b": "NOR",
+      "bLabel": null,
       "as": 1,
       "bs": 2,
       "w": "NOR",
@@ -490,7 +500,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "FRA",
+      "aLabel": null,
       "b": "SWE",
+      "bLabel": null,
       "as": 3,
       "bs": 0,
       "w": "FRA",
@@ -499,7 +511,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "MEX",
+      "aLabel": null,
       "b": "ECU",
+      "bLabel": null,
       "as": 2,
       "bs": 0,
       "w": "MEX",
@@ -508,7 +522,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "ENG",
+      "aLabel": null,
       "b": "COD",
+      "bLabel": null,
       "as": 2,
       "bs": 1,
       "w": "ENG",
@@ -517,7 +533,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "BEL",
+      "aLabel": null,
       "b": "SEN",
+      "bLabel": null,
       "as": 3,
       "bs": 2,
       "w": "BEL",
@@ -526,7 +544,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "USA",
+      "aLabel": null,
       "b": "BIH",
+      "bLabel": null,
       "as": 2,
       "bs": 0,
       "w": "USA",
@@ -535,7 +555,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "ESP",
+      "aLabel": null,
       "b": "AUT",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -544,7 +566,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "POR",
+      "aLabel": null,
       "b": "CRO",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -553,7 +577,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "SUI",
+      "aLabel": null,
       "b": "ALG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -562,7 +588,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "AUS",
+      "aLabel": null,
       "b": "EGY",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -571,7 +599,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "ARG",
+      "aLabel": null,
       "b": "CPV",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -580,7 +610,9 @@ window.RESULTS = {
     {
       "round": "r32",
       "a": "COL",
+      "aLabel": null,
       "b": "GHA",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -589,7 +621,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "CAN",
+      "aLabel": null,
       "b": "MAR",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -598,7 +632,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "PAR",
+      "aLabel": null,
       "b": "FRA",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -607,7 +643,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "BRA",
+      "aLabel": null,
       "b": "NOR",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -616,7 +654,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "MEX",
+      "aLabel": null,
       "b": "ENG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -625,7 +665,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": null,
+      "aLabel": "Ganador R32-11",
       "b": null,
+      "bLabel": "Ganador R32-12",
       "as": null,
       "bs": null,
       "w": null,
@@ -634,7 +676,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": "USA",
+      "aLabel": null,
       "b": "BEL",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -643,7 +687,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": null,
+      "aLabel": "Ganador R32-14",
       "b": null,
+      "bLabel": "Ganador R32-16",
       "as": null,
       "bs": null,
       "w": null,
@@ -652,7 +698,9 @@ window.RESULTS = {
     {
       "round": "r16",
       "a": null,
+      "aLabel": "Ganador R32-13",
       "b": null,
+      "bLabel": "Ganador R32-15",
       "as": null,
       "bs": null,
       "w": null,
@@ -661,7 +709,9 @@ window.RESULTS = {
     {
       "round": "qf",
       "a": null,
+      "aLabel": "Ganador 8vos-1",
       "b": null,
+      "bLabel": "Ganador 8vos-2",
       "as": null,
       "bs": null,
       "w": null,
@@ -670,7 +720,9 @@ window.RESULTS = {
     {
       "round": "qf",
       "a": null,
+      "aLabel": "Ganador 8vos-5",
       "b": null,
+      "bLabel": "Ganador 8vos-6",
       "as": null,
       "bs": null,
       "w": null,
@@ -679,7 +731,9 @@ window.RESULTS = {
     {
       "round": "qf",
       "a": null,
+      "aLabel": "Ganador 8vos-3",
       "b": null,
+      "bLabel": "Ganador 8vos-4",
       "as": null,
       "bs": null,
       "w": null,
@@ -688,7 +742,9 @@ window.RESULTS = {
     {
       "round": "qf",
       "a": null,
+      "aLabel": "Ganador 8vos-7",
       "b": null,
+      "bLabel": "Ganador 8vos-8",
       "as": null,
       "bs": null,
       "w": null,
@@ -697,7 +753,9 @@ window.RESULTS = {
     {
       "round": "sf",
       "a": null,
+      "aLabel": "Ganador 4tos-1",
       "b": null,
+      "bLabel": "Ganador 4tos-2",
       "as": null,
       "bs": null,
       "w": null,
@@ -706,7 +764,9 @@ window.RESULTS = {
     {
       "round": "sf",
       "a": null,
+      "aLabel": "Ganador 4tos-3",
       "b": null,
+      "bLabel": "Ganador 4tos-4",
       "as": null,
       "bs": null,
       "w": null,
@@ -715,7 +775,9 @@ window.RESULTS = {
     {
       "round": "bronze",
       "a": null,
+      "aLabel": "Perdedor Semi-1",
       "b": null,
+      "bLabel": "Perdedor Semi-2",
       "as": null,
       "bs": null,
       "w": null,
@@ -724,7 +786,9 @@ window.RESULTS = {
     {
       "round": "final",
       "a": null,
+      "aLabel": "Ganador Semi-1",
       "b": null,
+      "bLabel": "Ganador Semi-2",
       "as": null,
       "bs": null,
       "w": null,
