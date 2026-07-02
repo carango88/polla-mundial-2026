@@ -414,7 +414,8 @@ window.RESULTS = {
     "MEX",
     "ENG",
     "BEL",
-    "USA"
+    "USA",
+    "ESP"
   ],
   "qf": [],
   "sf": [],
@@ -558,10 +559,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "AUT",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 0,
+      "w": "ESP",
+      "done": true
     },
     {
       "round": "r32",
@@ -666,8 +667,8 @@ window.RESULTS = {
       "round": "r16",
       "a": null,
       "aLabel": "Ganador R32-11",
-      "b": null,
-      "bLabel": "Ganador R32-12",
+      "b": "ESP",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -822,6 +823,11 @@ window.RESULTS = {
       "goals": 4
     },
     {
+      "player": "Mikel Oyarzabal",
+      "team": "ESP",
+      "goals": 4
+    },
+    {
       "player": "Ousmane Dembélé",
       "team": "FRA",
       "goals": 4
@@ -964,11 +970,6 @@ window.RESULTS = {
     {
       "player": "Maxi Araújo",
       "team": "URU",
-      "goals": 2
-    },
-    {
-      "player": "Mikel Oyarzabal",
-      "team": "ESP",
       "goals": 2
     },
     {
@@ -1474,6 +1475,11 @@ window.RESULTS = {
     {
       "player": "Omar Rekik",
       "team": "TUN",
+      "goals": 1
+    },
+    {
+      "player": "Pedro Porro",
+      "team": "ESP",
       "goals": 1
     },
     {
