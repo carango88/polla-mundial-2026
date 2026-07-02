@@ -413,7 +413,8 @@ window.RESULTS = {
     "FRA",
     "MEX",
     "ENG",
-    "BEL"
+    "BEL",
+    "USA"
   ],
   "qf": [],
   "sf": [],
@@ -526,10 +527,10 @@ window.RESULTS = {
       "round": "r32",
       "a": "USA",
       "b": "BIH",
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 0,
+      "w": "USA",
+      "done": true
     },
     {
       "round": "r32",
@@ -632,7 +633,7 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
+      "a": "USA",
       "b": "BEL",
       "as": null,
       "bs": null,
@@ -787,6 +788,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Folarin Balogun",
+      "team": "USA",
+      "goals": 3
+    },
+    {
       "player": "Ismael Saibari",
       "team": "MAR",
       "goals": 3
@@ -869,11 +875,6 @@ window.RESULTS = {
     {
       "player": "Ermin Mahmic",
       "team": "BIH",
-      "goals": 2
-    },
-    {
-      "player": "Folarin Balogun",
-      "team": "USA",
       "goals": 2
     },
     {
@@ -1284,6 +1285,11 @@ window.RESULTS = {
     {
       "player": "Mahmoud Saber",
       "team": "EGY",
+      "goals": 1
+    },
+    {
+      "player": "Malik Tillman",
+      "team": "USA",
       "goals": 1
     },
     {
