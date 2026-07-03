@@ -415,7 +415,8 @@ window.RESULTS = {
     "ENG",
     "BEL",
     "USA",
-    "ESP"
+    "ESP",
+    "POR"
   ],
   "qf": [],
   "sf": [],
@@ -570,10 +571,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "CRO",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 1,
+      "w": "POR",
+      "done": true
     },
     {
       "round": "r32",
@@ -665,8 +666,8 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
-      "aLabel": "Ganador R32-11",
+      "a": "POR",
+      "aLabel": null,
       "b": "ESP",
       "bLabel": null,
       "as": null,
@@ -848,6 +849,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Cristiano Ronaldo",
+      "team": "POR",
+      "goals": 3
+    },
+    {
       "player": "Deniz Undav",
       "team": "GER",
       "goals": 3
@@ -915,11 +921,6 @@ window.RESULTS = {
     {
       "player": "Bradley Barcola",
       "team": "FRA",
-      "goals": 2
-    },
-    {
-      "player": "Cristiano Ronaldo",
-      "team": "POR",
       "goals": 2
     },
     {
@@ -1193,6 +1194,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Gonçalo Ramos",
+      "team": "POR",
+      "goals": 1
+    },
+    {
       "player": "Gonzalo Plata",
       "team": "ECU",
       "goals": 1
@@ -1235,6 +1241,11 @@ window.RESULTS = {
     {
       "player": "Issa Diop",
       "team": "MAR",
+      "goals": 1
+    },
+    {
+      "player": "Ivan Perisic",
+      "team": "CRO",
       "goals": 1
     },
     {
