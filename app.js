@@ -1246,17 +1246,29 @@ function simScore(p){
 }
 function renderSim(){
   if(!simR32) initSim();
-  // Lock rounds that already have official results — only undecided rounds stay editable.
-  const lk={ r32:(results.r32||[]).length>0, r16:(results.r16||[]).length>0, qf:(results.qf||[]).length>0, sf:(results.sf||[]).length>0 };
-  if(lk.r32) simR32=new Set(results.r32);
-  if(lk.r16) simR16=new Set(results.r16);
-  if(lk.qf)  simQF =new Set(results.qf);
-  if(!lk.r16) simR16=new Set([...simR16].filter(c=>simR32.has(c)));   // keep children valid subsets
-  if(!lk.qf)  simQF =new Set([...simQF ].filter(c=>simR16.has(c)));
+  // A round FULLY locks only when complete (32/16/8/4). While partial, official
+  // teams stay fixed (🔒) but pending slots are editable with teams still alive —
+  // so you can advance e.g. Argentina before its R32 match is even played.
+  const FULL={r32:32,r16:16,qf:8,sf:4};
+  const official={r32:new Set(results.r32||[]),r16:new Set(results.r16||[]),qf:new Set(results.qf||[]),sf:new Set(results.sf||[])};
+  const full={r32:official.r32.size>=FULL.r32,r16:official.r16.size>=FULL.r16,qf:official.qf.size>=FULL.qf,sf:official.sf.size>=FULL.sf};
+  // teams already knocked out: group non-qualifiers + losers of completed knockout matches
+  const dead=new Set(results.eliminated||[]);
+  for(const m of (results.bracket||[])) if(m.done&&m.w){ if(m.a&&m.a!==m.w)dead.add(m.a); if(m.b&&m.b!==m.w)dead.add(m.b); }
+  const reconcile=(set,parent,off,isFull,max)=>{
+    if(isFull) return new Set(off);
+    let s=new Set([...set].filter(c=>parent.has(c)&&!dead.has(c)));   // keep valid & still-alive picks
+    off.forEach(t=>s.add(t));                                         // official always included
+    if(s.size>max){ const k=new Set(off); for(const c of s){ if(k.size>=max) break; k.add(c);} s=k; }
+    return s;
+  };
+  simR32 = full.r32 ? new Set(official.r32) : reconcile(simR32,new Set(D.teams),official.r32,false,FULL.r32);
+  simR16 = reconcile(simR16,simR32,official.r16,full.r16,FULL.r16);
+  simQF  = reconcile(simQF, simR16,official.qf, full.qf, FULL.qf);
   const podLockVal=[results.champion,results.runnerUp,results.third,results.fourth];
-  const podCands = lk.sf ? [...results.sf] : [...simQF];
+  const podCands = full.sf ? [...official.sf] : [...simQF];
   simPodio=simPodio.map((c,i)=> podLockVal[i] ? podLockVal[i] : (c && podCands.includes(c) ? c : ""));
-  if(lk.sf){ const used=new Set(simPodio.filter(Boolean)); for(let i=0;i<4;i++) if(!simPodio[i]){ const free=podCands.find(t=>!used.has(t)); if(free){simPodio[i]=free;used.add(free);} } }
+  if(full.sf){ const used=new Set(simPodio.filter(Boolean)); for(let i=0;i<4;i++) if(!simPodio[i]){ const free=podCands.find(t=>!used.has(t)); if(free){simPodio[i]=free;used.add(free);} } }
   const lockGol=!!results.scorer; if(lockGol) simGoleador=results.scorer;
 
   const app=document.getElementById("app");
@@ -1266,19 +1278,21 @@ function renderSim(){
   const dlist=`<datalist id="simnames">${byName.map(p=>`<option value="${p.name}"></option>`).join("")}</datalist>`;
 
   const chip=(c,round,on,locked)=> locked
-    ? `<span class="pk pk-ok" title="resultado oficial — bloqueado"><span class="fl">${flagOf(c)}</span> ${c}</span>`
+    ? `<span class="pk pk-ok" title="oficial — bloqueado"><span class="fl">${flagOf(c)}</span> ${c} 🔒</span>`
     : `<span class="pk ${on?'pk-ok':''} simchip" data-round="${round}" data-c="${c}" style="cursor:pointer"><span class="fl">${flagOf(c)}</span> ${c}</span>`;
-  const grid=(cands,set,round,max,locked)=>`<div class="card">
-    <h3 style="margin-top:0">${round.toUpperCase()} ${locked?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${set.size}${locked?' oficial':'/'+max} · ${P[round.toLowerCase()]||({r32:2,r16:3,qf:4})[round.toLowerCase()]} pts c/u</span></h3>
-    <div class="pkwrap">${(locked?[...set].sort():cands).map(c=>chip(c,round.toLowerCase(),set.has(c),locked)).join("")}</div></div>`;
-
-  const r32grid=grid(D.teams,simR32,"R32",32,lk.r32);
-  const r16grid=grid([...simR32].sort(),simR16,"R16",16,lk.r16);
-  const qfgrid =grid([...simR16].sort(),simQF,"QF",8,lk.qf);
+  const grid=(rk,parent,set,off,isFull,max)=>{
+    const cands = isFull ? [...set].sort() : [...parent].filter(c=>!dead.has(c)).sort();   // alive candidates only
+    const chips = cands.map(c=>chip(c,rk,set.has(c),isFull||off.has(c))).join("");
+    return `<div class="card"><h3 style="margin-top:0">${rk.toUpperCase()} ${isFull?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${set.size}/${max}${off.size&&!isFull?` · ${off.size} ya definidos`:''} · ${P[rk]} pts c/u</span></h3>
+      <div class="pkwrap">${chips}</div></div>`;
+  };
+  const r32grid=grid("r32",new Set(D.teams),simR32,official.r32,full.r32,32);
+  const r16grid=grid("r16",simR32,simR16,official.r16,full.r16,16);
+  const qfgrid =grid("qf", simR16,simQF, official.qf, full.qf, 8);
   const podSel=(i,label,pts)=>{const locked=!!podLockVal[i];
     const o=[...podCands].sort().map(c=>`<option value="${c}" ${simPodio[i]===c?'selected':''}>${nameOf(c)} (${c})</option>`).join("");
     return `<div class="kv"><span>${label} <span class="muted">${pts} pts</span>${locked?' 🔒':''}</span><select class="simpod" data-i="${i}" ${locked?'disabled':''}><option value="">—</option>${o}</select></div>`;};
-  const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) ${lk.sf?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${lk.sf?'semifinalistas oficiales — ordénalos':'elige de los '+simQF.size+' de Cuartos'} · 5 pts c/u</span></h3>
+  const podioCard=`<div class="card"><h3 style="margin-top:0">🏆 Final four (en orden) ${full.sf?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· ${full.sf?'semifinalistas oficiales — ordénalos':'elige de los '+simQF.size+' de Cuartos'} · 5 pts c/u</span></h3>
     ${podSel(0,"🏆 Campeón",25)}${podSel(1,"🥈 Subcampeón",15)}${podSel(2,"🥉 3.º",10)}${podSel(3,"4.º",10)}</div>`;
   const golList=tally(D.participants.map(p=>p.scorer));   // [surname, count] by popularity
   const golCard=`<div class="card"><h3 style="margin-top:0">👟 Goleador (bota de oro) ${lockGol?'🔒':''} <span class="muted" style="font-weight:400;font-size:12px">· 15 pts</span></h3>
