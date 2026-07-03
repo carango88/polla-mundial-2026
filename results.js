@@ -416,7 +416,8 @@ window.RESULTS = {
     "BEL",
     "USA",
     "ESP",
-    "POR"
+    "POR",
+    "SUI"
   ],
   "qf": [],
   "sf": [],
@@ -582,10 +583,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ALG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 0,
+      "w": "SUI",
+      "done": true
     },
     {
       "round": "r32",
@@ -699,8 +700,8 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
-      "aLabel": "Ganador R32-13",
+      "a": "SUI",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador R32-15",
       "as": null,
@@ -924,6 +925,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Breel Embolo",
+      "team": "SUI",
+      "goals": 2
+    },
+    {
       "player": "Crysencio Summerville",
       "team": "NED",
       "goals": 2
@@ -1104,11 +1110,6 @@ window.RESULTS = {
       "goals": 1
     },
     {
-      "player": "Breel Embolo",
-      "team": "SUI",
-      "goals": 1
-    },
-    {
       "player": "Brian Cipenga",
       "team": "COD",
       "goals": 1
@@ -1131,6 +1132,11 @@ window.RESULTS = {
     {
       "player": "Daizen Maeda",
       "team": "JPN",
+      "goals": 1
+    },
+    {
+      "player": "Dan Ndoye",
+      "team": "SUI",
       "goals": 1
     },
     {
