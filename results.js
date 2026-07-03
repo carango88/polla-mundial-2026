@@ -417,7 +417,8 @@ window.RESULTS = {
     "USA",
     "ESP",
     "POR",
-    "SUI"
+    "SUI",
+    "EGY"
   ],
   "qf": [],
   "sf": [],
@@ -594,10 +595,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "EGY",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 1,
+      "w": "EGY",
+      "done": true
     },
     {
       "round": "r32",
@@ -691,8 +692,8 @@ window.RESULTS = {
       "round": "r16",
       "a": null,
       "aLabel": "Ganador R32-14",
-      "b": null,
-      "bLabel": "Ganador R32-16",
+      "b": "EGY",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -950,6 +951,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Emam Ashour",
+      "team": "EGY",
+      "goals": 2
+    },
+    {
       "player": "Ermin Mahmic",
       "team": "BIH",
       "goals": 2
@@ -1152,11 +1158,6 @@ window.RESULTS = {
     {
       "player": "Eldor Shomurodov",
       "team": "UZB",
-      "goals": 1
-    },
-    {
-      "player": "Emam Ashour",
-      "team": "EGY",
       "goals": 1
     },
     {
