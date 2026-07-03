@@ -8,8 +8,7 @@ name: Update results
 # run lands soon after a match ends.)
 on:
   schedule:
-    - cron: "*/10 16-23 * 6,7 *"   # 16:00–23:59 UTC every 10 min (US afternoon/evening games)
-    - cron: "*/10 0-7 * 6,7 *"     # 00:00–07:59 UTC every 10 min (late games finishing overnight ET)
+    - cron: "*/10 * * 6,7 *"    # every 10 min, all day, June & July (off-slot runs are free no-ops)
   workflow_dispatch:         # allow manual "Run workflow" button
 
 permissions:
@@ -40,7 +39,7 @@ jobs:
             git config user.name "results-bot"
             git config user.email "actions@github.com"
             git add results.js
-            git commit -m "Auto-update results.js from ESPN [skip ci]"
+            git commit -m "Auto-update results.js from ESPN"
             git push
             echo "results.js updated and pushed."
           fi
