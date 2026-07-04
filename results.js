@@ -418,7 +418,8 @@ window.RESULTS = {
     "ESP",
     "POR",
     "SUI",
-    "EGY"
+    "EGY",
+    "ARG"
   ],
   "qf": [],
   "sf": [],
@@ -606,10 +607,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "CPV",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 2,
+      "w": "ARG",
+      "done": true
     },
     {
       "round": "r32",
@@ -690,8 +691,8 @@ window.RESULTS = {
     },
     {
       "round": "r16",
-      "a": null,
-      "aLabel": "Ganador R32-14",
+      "a": "ARG",
+      "aLabel": null,
       "b": "EGY",
       "bLabel": null,
       "as": null,
@@ -801,13 +802,13 @@ window.RESULTS = {
   ],
   "goals": [
     {
-      "player": "Kylian Mbappé",
-      "team": "FRA",
-      "goals": 6
-    },
-    {
       "player": "Lionel Messi",
       "team": "ARG",
+      "goals": 7
+    },
+    {
+      "player": "Kylian Mbappé",
+      "team": "FRA",
       "goals": 6
     },
     {
@@ -1146,6 +1147,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Deroy Duarte",
+      "team": "CPV",
+      "goals": 1
+    },
+    {
       "player": "Derrick Luckassen",
       "team": "GHA",
       "goals": 1
@@ -1351,6 +1357,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Lisandro Martínez",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Livano Comenencia",
       "team": "CUW",
       "goals": 1
@@ -1538,6 +1549,11 @@ window.RESULTS = {
     {
       "player": "Sebastian Berhalter",
       "team": "USA",
+      "goals": 1
+    },
+    {
+      "player": "Sidny Lopes Cabral",
+      "team": "CPV",
       "goals": 1
     },
     {
