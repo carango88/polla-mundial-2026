@@ -419,7 +419,8 @@ window.RESULTS = {
     "POR",
     "SUI",
     "EGY",
-    "ARG"
+    "ARG",
+    "COL"
   ],
   "qf": [],
   "sf": [],
@@ -444,7 +445,23 @@ window.RESULTS = {
     "IRQ",
     "JOR",
     "UZB",
-    "PAN"
+    "PAN",
+    "RSA",
+    "JPN",
+    "GER",
+    "NED",
+    "CIV",
+    "SWE",
+    "ECU",
+    "COD",
+    "SEN",
+    "BIH",
+    "AUT",
+    "CRO",
+    "ALG",
+    "AUS",
+    "CPV",
+    "GHA"
   ],
   "bracket": [
     {
@@ -618,10 +635,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "GHA",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 0,
+      "w": "COL",
+      "done": true
     },
     {
       "round": "r16",
@@ -704,8 +721,8 @@ window.RESULTS = {
       "round": "r16",
       "a": "SUI",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador R32-15",
+      "b": "COL",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -1274,6 +1291,11 @@ window.RESULTS = {
     {
       "player": "Jan Paul van Hecke",
       "team": "NED",
+      "goals": 1
+    },
+    {
+      "player": "Jhon Arias",
+      "team": "COL",
       "goals": 1
     },
     {
