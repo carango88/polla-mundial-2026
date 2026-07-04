@@ -423,7 +423,8 @@ window.RESULTS = {
     "COL"
   ],
   "qf": [
-    "MAR"
+    "MAR",
+    "FRA"
   ],
   "sf": [],
   "fourth": "",
@@ -659,10 +660,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "FRA",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 0,
+      "bs": 1,
+      "w": "FRA",
+      "done": true
     },
     {
       "round": "r16",
@@ -732,8 +733,8 @@ window.RESULTS = {
     },
     {
       "round": "qf",
-      "a": null,
-      "aLabel": "Ganador 8vos-1",
+      "a": "FRA",
+      "aLabel": null,
       "b": "MAR",
       "bLabel": null,
       "as": null,
@@ -821,14 +822,14 @@ window.RESULTS = {
   ],
   "goals": [
     {
-      "player": "Lionel Messi",
-      "team": "ARG",
+      "player": "Kylian Mbappé",
+      "team": "FRA",
       "goals": 7
     },
     {
-      "player": "Kylian Mbappé",
-      "team": "FRA",
-      "goals": 6
+      "player": "Lionel Messi",
+      "team": "ARG",
+      "goals": 7
     },
     {
       "player": "Erling Haaland",
