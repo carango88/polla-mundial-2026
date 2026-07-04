@@ -422,7 +422,9 @@ window.RESULTS = {
     "ARG",
     "COL"
   ],
-  "qf": [],
+  "qf": [
+    "MAR"
+  ],
   "sf": [],
   "fourth": "",
   "third": "",
@@ -646,10 +648,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "MAR",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 0,
+      "bs": 3,
+      "w": "MAR",
+      "done": true
     },
     {
       "round": "r16",
@@ -732,8 +734,8 @@ window.RESULTS = {
       "round": "qf",
       "a": null,
       "aLabel": "Ganador 8vos-1",
-      "b": null,
-      "bLabel": "Ganador 8vos-2",
+      "b": "MAR",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -939,6 +941,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Azzedine Ounahi",
+      "team": "MAR",
+      "goals": 2
+    },
+    {
       "player": "Bradley Barcola",
       "team": "FRA",
       "goals": 2
@@ -1036,6 +1043,11 @@ window.RESULTS = {
     {
       "player": "Rubén Vargas",
       "team": "SUI",
+      "goals": 2
+    },
+    {
+      "player": "Soufiane Rahimi",
+      "team": "MAR",
       "goals": 2
     },
     {
@@ -1576,11 +1588,6 @@ window.RESULTS = {
     {
       "player": "Sidny Lopes Cabral",
       "team": "CPV",
-      "goals": 1
-    },
-    {
-      "player": "Soufiane Rahimi",
-      "team": "MAR",
       "goals": 1
     },
     {
