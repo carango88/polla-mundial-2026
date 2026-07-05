@@ -424,7 +424,8 @@ window.RESULTS = {
   ],
   "qf": [
     "MAR",
-    "FRA"
+    "FRA",
+    "NOR"
   ],
   "sf": [],
   "fourth": "",
@@ -671,10 +672,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "NOR",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 2,
+      "w": "NOR",
+      "done": true
     },
     {
       "round": "r16",
@@ -755,8 +756,8 @@ window.RESULTS = {
     },
     {
       "round": "qf",
-      "a": null,
-      "aLabel": "Ganador 8vos-3",
+      "a": "NOR",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador 8vos-4",
       "as": null,
@@ -822,6 +823,11 @@ window.RESULTS = {
   ],
   "goals": [
     {
+      "player": "Erling Haaland",
+      "team": "NOR",
+      "goals": 7
+    },
+    {
       "player": "Kylian Mbappé",
       "team": "FRA",
       "goals": 7
@@ -830,11 +836,6 @@ window.RESULTS = {
       "player": "Lionel Messi",
       "team": "ARG",
       "goals": 7
-    },
-    {
-      "player": "Erling Haaland",
-      "team": "NOR",
-      "goals": 5
     },
     {
       "player": "Harry Kane",
@@ -1504,6 +1505,11 @@ window.RESULTS = {
     {
       "player": "Nestory Irankunda",
       "team": "AUS",
+      "goals": 1
+    },
+    {
+      "player": "Neymar",
+      "team": "BRA",
       "goals": 1
     },
     {
