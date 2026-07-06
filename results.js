@@ -425,7 +425,8 @@ window.RESULTS = {
   "qf": [
     "MAR",
     "FRA",
-    "NOR"
+    "NOR",
+    "ENG"
   ],
   "sf": [],
   "fourth": "",
@@ -683,10 +684,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ENG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 3,
+      "w": "ENG",
+      "done": true
     },
     {
       "round": "r16",
@@ -758,8 +759,8 @@ window.RESULTS = {
       "round": "qf",
       "a": "NOR",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador 8vos-4",
+      "b": "ENG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -840,11 +841,21 @@ window.RESULTS = {
     {
       "player": "Harry Kane",
       "team": "ENG",
-      "goals": 5
+      "goals": 6
     },
     {
       "player": "Ismaïla Sarr",
       "team": "SEN",
+      "goals": 4
+    },
+    {
+      "player": "Jude Bellingham",
+      "team": "ENG",
+      "goals": 4
+    },
+    {
+      "player": "Julián Quiñones",
+      "team": "MEX",
       "goals": 4
     },
     {
@@ -908,11 +919,6 @@ window.RESULTS = {
       "goals": 3
     },
     {
-      "player": "Julián Quiñones",
-      "team": "MEX",
-      "goals": 3
-    },
-    {
       "player": "Kai Havertz",
       "team": "GER",
       "goals": 3
@@ -920,6 +926,11 @@ window.RESULTS = {
     {
       "player": "Matheus Cunha",
       "team": "BRA",
+      "goals": 3
+    },
+    {
+      "player": "Raúl Jiménez",
+      "team": "MEX",
       "goals": 3
     },
     {
@@ -993,11 +1004,6 @@ window.RESULTS = {
       "goals": 2
     },
     {
-      "player": "Jude Bellingham",
-      "team": "ENG",
-      "goals": 2
-    },
-    {
       "player": "Leandro Trossard",
       "team": "BEL",
       "goals": 2
@@ -1025,11 +1031,6 @@ window.RESULTS = {
     {
       "player": "Ramin Rezaeian",
       "team": "IRN",
-      "goals": 2
-    },
-    {
-      "player": "Raúl Jiménez",
-      "team": "MEX",
       "goals": 2
     },
     {
