@@ -426,7 +426,8 @@ window.RESULTS = {
     "MAR",
     "FRA",
     "NOR",
-    "ENG"
+    "ENG",
+    "ESP"
   ],
   "sf": [],
   "fourth": "",
@@ -695,10 +696,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ESP",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 0,
+      "bs": 1,
+      "w": "ESP",
+      "done": true
     },
     {
       "round": "r16",
@@ -746,8 +747,8 @@ window.RESULTS = {
     },
     {
       "round": "qf",
-      "a": null,
-      "aLabel": "Ganador 8vos-5",
+      "a": "ESP",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador 8vos-6",
       "as": null,
@@ -1466,6 +1467,11 @@ window.RESULTS = {
     {
       "player": "Michal Sadílek",
       "team": "CZE",
+      "goals": 1
+    },
+    {
+      "player": "Mikel Merino",
+      "team": "ESP",
       "goals": 1
     },
     {
