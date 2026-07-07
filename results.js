@@ -427,7 +427,8 @@ window.RESULTS = {
     "FRA",
     "NOR",
     "ENG",
-    "ESP"
+    "ESP",
+    "BEL"
   ],
   "sf": [],
   "fourth": "",
@@ -707,10 +708,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "BEL",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 4,
+      "w": "BEL",
+      "done": true
     },
     {
       "round": "r16",
@@ -749,8 +750,8 @@ window.RESULTS = {
       "round": "qf",
       "a": "ESP",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador 8vos-6",
+      "b": "BEL",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -935,6 +936,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Romelu Lukaku",
+      "team": "BEL",
+      "goals": 3
+    },
+    {
       "player": "Yoane Wissa",
       "team": "COD",
       "goals": 3
@@ -967,6 +973,11 @@ window.RESULTS = {
     {
       "player": "Breel Embolo",
       "team": "SUI",
+      "goals": 2
+    },
+    {
+      "player": "Charles De Ketelaere",
+      "team": "BEL",
       "goals": 2
     },
     {
@@ -1010,6 +1021,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Malik Tillman",
+      "team": "USA",
+      "goals": 2
+    },
+    {
       "player": "Marko Arnautovic",
       "team": "AUT",
       "goals": 2
@@ -1037,11 +1053,6 @@ window.RESULTS = {
     {
       "player": "Riyad Mahrez",
       "team": "ALG",
-      "goals": 2
-    },
-    {
-      "player": "Romelu Lukaku",
-      "team": "BEL",
       "goals": 2
     },
     {
@@ -1255,6 +1266,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Hans Vanaken",
+      "team": "BEL",
+      "goals": 1
+    },
+    {
       "player": "Hassan Al-Haydos",
       "team": "QAT",
       "goals": 1
@@ -1417,11 +1433,6 @@ window.RESULTS = {
     {
       "player": "Mahmoud Saber",
       "team": "EGY",
-      "goals": 1
-    },
-    {
-      "player": "Malik Tillman",
-      "team": "USA",
       "goals": 1
     },
     {
