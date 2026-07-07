@@ -428,7 +428,8 @@ window.RESULTS = {
     "NOR",
     "ENG",
     "ESP",
-    "BEL"
+    "BEL",
+    "ARG"
   ],
   "sf": [],
   "fourth": "",
@@ -719,10 +720,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "EGY",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 2,
+      "w": "ARG",
+      "done": true
     },
     {
       "round": "r16",
@@ -770,8 +771,8 @@ window.RESULTS = {
     },
     {
       "round": "qf",
-      "a": null,
-      "aLabel": "Ganador 8vos-7",
+      "a": "ARG",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador 8vos-8",
       "as": null,
@@ -826,6 +827,11 @@ window.RESULTS = {
   ],
   "goals": [
     {
+      "player": "Lionel Messi",
+      "team": "ARG",
+      "goals": 8
+    },
+    {
       "player": "Erling Haaland",
       "team": "NOR",
       "goals": 7
@@ -833,11 +839,6 @@ window.RESULTS = {
     {
       "player": "Kylian Mbappé",
       "team": "FRA",
-      "goals": 7
-    },
-    {
-      "player": "Lionel Messi",
-      "team": "ARG",
       "goals": 7
     },
     {
@@ -1036,6 +1037,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Mostafa Zico",
+      "team": "EGY",
+      "goals": 2
+    },
+    {
       "player": "Nicolas Pépé",
       "team": "CIV",
       "goals": 2
@@ -1181,6 +1187,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Cristian Romero",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Daizen Maeda",
       "team": "JPN",
       "goals": 1
@@ -1208,6 +1219,11 @@ window.RESULTS = {
     {
       "player": "Eldor Shomurodov",
       "team": "UZB",
+      "goals": 1
+    },
+    {
+      "player": "Enzo Fernández",
+      "team": "ARG",
       "goals": 1
     },
     {
@@ -1496,11 +1512,6 @@ window.RESULTS = {
       "goals": 1
     },
     {
-      "player": "Mostafa Zico",
-      "team": "EGY",
-      "goals": 1
-    },
-    {
       "player": "Mousa Al-Tamari",
       "team": "JOR",
       "goals": 1
@@ -1653,6 +1664,11 @@ window.RESULTS = {
     {
       "player": "Wilson Isidor",
       "team": "HAI",
+      "goals": 1
+    },
+    {
+      "player": "Yasser Ibrahim",
+      "team": "EGY",
       "goals": 1
     }
   ]
