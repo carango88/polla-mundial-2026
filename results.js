@@ -429,7 +429,8 @@ window.RESULTS = {
     "ENG",
     "ESP",
     "BEL",
-    "ARG"
+    "ARG",
+    "SUI"
   ],
   "sf": [],
   "fourth": "",
@@ -469,7 +470,15 @@ window.RESULTS = {
     "ALG",
     "AUS",
     "CPV",
-    "GHA"
+    "GHA",
+    "CAN",
+    "BRA",
+    "PAR",
+    "MEX",
+    "USA",
+    "POR",
+    "EGY",
+    "COL"
   ],
   "bracket": [
     {
@@ -731,10 +740,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "COL",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 0,
+      "bs": 0,
+      "w": "SUI",
+      "done": true
     },
     {
       "round": "qf",
@@ -773,8 +782,8 @@ window.RESULTS = {
       "round": "qf",
       "a": "ARG",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador 8vos-8",
+      "b": "SUI",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
