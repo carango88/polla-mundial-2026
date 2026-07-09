@@ -432,7 +432,9 @@ window.RESULTS = {
     "ARG",
     "SUI"
   ],
-  "sf": [],
+  "sf": [
+    "FRA"
+  ],
   "fourth": "",
   "third": "",
   "runnerUp": "",
@@ -751,10 +753,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "MAR",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 0,
+      "w": "FRA",
+      "done": true
     },
     {
       "round": "qf",
@@ -791,8 +793,8 @@ window.RESULTS = {
     },
     {
       "round": "sf",
-      "a": null,
-      "aLabel": "Ganador 4tos-1",
+      "a": "FRA",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador 4tos-2",
       "as": null,
@@ -836,6 +838,11 @@ window.RESULTS = {
   ],
   "goals": [
     {
+      "player": "Kylian Mbappé",
+      "team": "FRA",
+      "goals": 8
+    },
+    {
       "player": "Lionel Messi",
       "team": "ARG",
       "goals": 8
@@ -846,14 +853,14 @@ window.RESULTS = {
       "goals": 7
     },
     {
-      "player": "Kylian Mbappé",
-      "team": "FRA",
-      "goals": 7
-    },
-    {
       "player": "Harry Kane",
       "team": "ENG",
       "goals": 6
+    },
+    {
+      "player": "Ousmane Dembélé",
+      "team": "FRA",
+      "goals": 5
     },
     {
       "player": "Ismaïla Sarr",
@@ -873,11 +880,6 @@ window.RESULTS = {
     {
       "player": "Mikel Oyarzabal",
       "team": "ESP",
-      "goals": 4
-    },
-    {
-      "player": "Ousmane Dembélé",
-      "team": "FRA",
       "goals": 4
     },
     {
