@@ -433,7 +433,8 @@ window.RESULTS = {
     "SUI"
   ],
   "sf": [
-    "FRA"
+    "FRA",
+    "ESP"
   ],
   "fourth": "",
   "third": "",
@@ -764,10 +765,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "BEL",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 2,
+      "bs": 1,
+      "w": "ESP",
+      "done": true
     },
     {
       "round": "qf",
@@ -795,8 +796,8 @@ window.RESULTS = {
       "round": "sf",
       "a": "FRA",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador 4tos-2",
+      "b": "ESP",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -890,6 +891,11 @@ window.RESULTS = {
     {
       "player": "Brian Brobbey",
       "team": "NED",
+      "goals": 3
+    },
+    {
+      "player": "Charles De Ketelaere",
+      "team": "BEL",
       "goals": 3
     },
     {
@@ -988,11 +994,6 @@ window.RESULTS = {
       "goals": 2
     },
     {
-      "player": "Charles De Ketelaere",
-      "team": "BEL",
-      "goals": 2
-    },
-    {
       "player": "Crysencio Summerville",
       "team": "NED",
       "goals": 2
@@ -1045,6 +1046,11 @@ window.RESULTS = {
     {
       "player": "Maxi Araújo",
       "team": "URU",
+      "goals": 2
+    },
+    {
+      "player": "Mikel Merino",
+      "team": "ESP",
       "goals": 2
     },
     {
@@ -1235,6 +1241,11 @@ window.RESULTS = {
     {
       "player": "Enzo Fernández",
       "team": "ARG",
+      "goals": 1
+    },
+    {
+      "player": "Fabián Ruiz",
+      "team": "ESP",
       "goals": 1
     },
     {
@@ -1505,11 +1516,6 @@ window.RESULTS = {
     {
       "player": "Michal Sadílek",
       "team": "CZE",
-      "goals": 1
-    },
-    {
-      "player": "Mikel Merino",
-      "team": "ESP",
       "goals": 1
     },
     {
