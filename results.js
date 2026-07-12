@@ -434,7 +434,8 @@ window.RESULTS = {
   ],
   "sf": [
     "FRA",
-    "ESP"
+    "ESP",
+    "ENG"
   ],
   "fourth": "",
   "third": "",
@@ -776,10 +777,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ENG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 2,
+      "w": "ENG",
+      "done": true
     },
     {
       "round": "qf",
@@ -805,8 +806,8 @@ window.RESULTS = {
     },
     {
       "round": "sf",
-      "a": null,
-      "aLabel": "Ganador 4tos-3",
+      "a": "ENG",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador 4tos-4",
       "as": null,
@@ -859,6 +860,11 @@ window.RESULTS = {
       "goals": 6
     },
     {
+      "player": "Jude Bellingham",
+      "team": "ENG",
+      "goals": 6
+    },
+    {
       "player": "Ousmane Dembélé",
       "team": "FRA",
       "goals": 5
@@ -866,11 +872,6 @@ window.RESULTS = {
     {
       "player": "Ismaïla Sarr",
       "team": "SEN",
-      "goals": 4
-    },
-    {
-      "player": "Jude Bellingham",
-      "team": "ENG",
       "goals": 4
     },
     {
@@ -1151,6 +1152,11 @@ window.RESULTS = {
     {
       "player": "Amine Gouiri",
       "team": "ALG",
+      "goals": 1
+    },
+    {
+      "player": "Andreas Schjelderup",
+      "team": "NOR",
       "goals": 1
     },
     {
