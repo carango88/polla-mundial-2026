@@ -435,7 +435,8 @@ window.RESULTS = {
   "sf": [
     "FRA",
     "ESP",
-    "ENG"
+    "ENG",
+    "ARG"
   ],
   "fourth": "",
   "third": "",
@@ -482,7 +483,11 @@ window.RESULTS = {
     "USA",
     "POR",
     "EGY",
-    "COL"
+    "COL",
+    "MAR",
+    "NOR",
+    "BEL",
+    "SUI"
   ],
   "bracket": [
     {
@@ -788,10 +793,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "SUI",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 3,
+      "bs": 1,
+      "w": "ARG",
+      "done": true
     },
     {
       "round": "sf",
@@ -808,8 +813,8 @@ window.RESULTS = {
       "round": "sf",
       "a": "ENG",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador 4tos-4",
+      "b": "ARG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -1010,6 +1015,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Dan Ndoye",
+      "team": "SUI",
+      "goals": 2
+    },
+    {
       "player": "Daniel Muñoz",
       "team": "COL",
       "goals": 2
@@ -1027,6 +1037,11 @@ window.RESULTS = {
     {
       "player": "Habib Diarra",
       "team": "SEN",
+      "goals": 2
+    },
+    {
+      "player": "Lautaro Martínez",
+      "team": "ARG",
       "goals": 2
     },
     {
@@ -1135,6 +1150,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Alexis Mac Allister",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Alexis Saelemaekers",
       "team": "BEL",
       "goals": 1
@@ -1217,11 +1237,6 @@ window.RESULTS = {
     {
       "player": "Daizen Maeda",
       "team": "JPN",
-      "goals": 1
-    },
-    {
-      "player": "Dan Ndoye",
-      "team": "SUI",
       "goals": 1
     },
     {
@@ -1390,6 +1405,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Julián Álvarez",
+      "team": "ARG",
+      "goals": 1
+    },
+    {
       "player": "Julio Enciso",
       "team": "PAR",
       "goals": 1
@@ -1437,11 +1457,6 @@ window.RESULTS = {
     {
       "player": "Lamine Yamal",
       "team": "ESP",
-      "goals": 1
-    },
-    {
-      "player": "Lautaro Martínez",
-      "team": "ARG",
       "goals": 1
     },
     {
