@@ -804,10 +804,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ESP",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 0,
+      "bs": 2,
+      "w": "ESP",
+      "done": true
     },
     {
       "round": "sf",
@@ -822,8 +822,8 @@ window.RESULTS = {
     },
     {
       "round": "bronze",
-      "a": null,
-      "aLabel": "Perdedor Semi-1",
+      "a": "FRA",
+      "aLabel": null,
       "b": null,
       "bLabel": "Perdedor Semi-2",
       "as": null,
@@ -833,8 +833,8 @@ window.RESULTS = {
     },
     {
       "round": "final",
-      "a": null,
-      "aLabel": "Ganador Semi-1",
+      "a": "ESP",
+      "aLabel": null,
       "b": null,
       "bLabel": "Ganador Semi-2",
       "as": null,
@@ -870,6 +870,11 @@ window.RESULTS = {
       "goals": 6
     },
     {
+      "player": "Mikel Oyarzabal",
+      "team": "ESP",
+      "goals": 5
+    },
+    {
       "player": "Ousmane Dembélé",
       "team": "FRA",
       "goals": 5
@@ -882,11 +887,6 @@ window.RESULTS = {
     {
       "player": "Julián Quiñones",
       "team": "MEX",
-      "goals": 4
-    },
-    {
-      "player": "Mikel Oyarzabal",
-      "team": "ESP",
       "goals": 4
     },
     {
@@ -1082,6 +1082,11 @@ window.RESULTS = {
     {
       "player": "Pape Gueye",
       "team": "SEN",
+      "goals": 2
+    },
+    {
+      "player": "Pedro Porro",
+      "team": "ESP",
       "goals": 2
     },
     {
@@ -1612,11 +1617,6 @@ window.RESULTS = {
     {
       "player": "Omar Rekik",
       "team": "TUN",
-      "goals": 1
-    },
-    {
-      "player": "Pedro Porro",
-      "team": "ESP",
       "goals": 1
     },
     {
