@@ -815,17 +815,17 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ARG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 2,
+      "w": "ARG",
+      "done": true
     },
     {
       "round": "bronze",
       "a": "FRA",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Perdedor Semi-2",
+      "b": "ENG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -835,8 +835,8 @@ window.RESULTS = {
       "round": "final",
       "a": "ESP",
       "aLabel": null,
-      "b": null,
-      "bLabel": "Ganador Semi-2",
+      "b": "ARG",
+      "bLabel": null,
       "as": null,
       "bs": null,
       "w": null,
@@ -950,6 +950,11 @@ window.RESULTS = {
       "goals": 3
     },
     {
+      "player": "Lautaro Martínez",
+      "team": "ARG",
+      "goals": 3
+    },
+    {
       "player": "Matheus Cunha",
       "team": "BRA",
       "goals": 3
@@ -1030,6 +1035,11 @@ window.RESULTS = {
       "goals": 2
     },
     {
+      "player": "Enzo Fernández",
+      "team": "ARG",
+      "goals": 2
+    },
+    {
       "player": "Ermin Mahmic",
       "team": "BIH",
       "goals": 2
@@ -1037,11 +1047,6 @@ window.RESULTS = {
     {
       "player": "Habib Diarra",
       "team": "SEN",
-      "goals": 2
-    },
-    {
-      "player": "Lautaro Martínez",
-      "team": "ARG",
       "goals": 2
     },
     {
@@ -1190,6 +1195,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Anthony Gordon",
+      "team": "ENG",
+      "goals": 1
+    },
+    {
       "player": "Antonio Nusa",
       "team": "NOR",
       "goals": 1
@@ -1262,11 +1272,6 @@ window.RESULTS = {
     {
       "player": "Eldor Shomurodov",
       "team": "UZB",
-      "goals": 1
-    },
-    {
-      "player": "Enzo Fernández",
-      "team": "ARG",
       "goals": 1
     },
     {
