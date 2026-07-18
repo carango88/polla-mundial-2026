@@ -438,8 +438,8 @@ window.RESULTS = {
     "ENG",
     "ARG"
   ],
-  "fourth": "",
-  "third": "",
+  "fourth": "FRA",
+  "third": "ENG",
   "runnerUp": "",
   "champion": "",
   "scorer": "",
@@ -826,10 +826,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ENG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 4,
+      "bs": 6,
+      "w": "ENG",
+      "done": true
     },
     {
       "round": "final",
@@ -847,7 +847,7 @@ window.RESULTS = {
     {
       "player": "Kylian Mbappé",
       "team": "FRA",
-      "goals": 8
+      "goals": 10
     },
     {
       "player": "Lionel Messi",
@@ -860,23 +860,23 @@ window.RESULTS = {
       "goals": 7
     },
     {
+      "player": "Jude Bellingham",
+      "team": "ENG",
+      "goals": 7
+    },
+    {
       "player": "Harry Kane",
       "team": "ENG",
       "goals": 6
     },
     {
-      "player": "Jude Bellingham",
-      "team": "ENG",
+      "player": "Ousmane Dembélé",
+      "team": "FRA",
       "goals": 6
     },
     {
       "player": "Mikel Oyarzabal",
       "team": "ESP",
-      "goals": 5
-    },
-    {
-      "player": "Ousmane Dembélé",
-      "team": "FRA",
       "goals": 5
     },
     {
@@ -895,8 +895,18 @@ window.RESULTS = {
       "goals": 4
     },
     {
+      "player": "Bradley Barcola",
+      "team": "FRA",
+      "goals": 3
+    },
+    {
       "player": "Brian Brobbey",
       "team": "NED",
+      "goals": 3
+    },
+    {
+      "player": "Bukayo Saka",
+      "team": "ENG",
       "goals": 3
     },
     {
@@ -992,11 +1002,6 @@ window.RESULTS = {
     {
       "player": "Azzedine Ounahi",
       "team": "MAR",
-      "goals": 2
-    },
-    {
-      "player": "Bradley Barcola",
-      "team": "FRA",
       "goals": 2
     },
     {
@@ -1255,6 +1260,11 @@ window.RESULTS = {
       "goals": 1
     },
     {
+      "player": "Declan Rice",
+      "team": "ENG",
+      "goals": 1
+    },
+    {
       "player": "Deroy Duarte",
       "team": "CPV",
       "goals": 1
@@ -1272,6 +1282,11 @@ window.RESULTS = {
     {
       "player": "Eldor Shomurodov",
       "team": "UZB",
+      "goals": 1
+    },
+    {
+      "player": "Ezri Konsa",
+      "team": "ENG",
       "goals": 1
     },
     {
