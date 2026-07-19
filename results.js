@@ -440,8 +440,8 @@ window.RESULTS = {
   ],
   "fourth": "FRA",
   "third": "ENG",
-  "runnerUp": "",
-  "champion": "",
+  "runnerUp": "ARG",
+  "champion": "ESP",
   "scorer": "",
   "eliminated": [
     "CZE",
@@ -837,10 +837,10 @@ window.RESULTS = {
       "aLabel": null,
       "b": "ARG",
       "bLabel": null,
-      "as": null,
-      "bs": null,
-      "w": null,
-      "done": false
+      "as": 1,
+      "bs": 0,
+      "w": "ESP",
+      "done": true
     }
   ],
   "goals": [
@@ -1297,6 +1297,11 @@ window.RESULTS = {
     {
       "player": "Felix Nmecha",
       "team": "GER",
+      "goals": 1
+    },
+    {
+      "player": "Ferran Torres",
+      "team": "ESP",
       "goals": 1
     },
     {
